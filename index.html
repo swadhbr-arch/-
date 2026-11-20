@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>عبدالرحيم الجياشي الشمري | الحسابات الرسمية</title>
     
-    <!-- أيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- خط عربي فخم (Cairo و Tajawal) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@700;800;900&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -21,108 +19,85 @@
         }
 
         body {
-            font-family: 'Tajawal', 'Cairo', sans-serif;
+            font-family: 'Tajawal', sans-serif;
             min-height: 100vh;
             background: #05070e;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 1.5rem;
+            padding: 1.2rem;
             overflow-x: hidden;
             position: relative;
         }
 
-        /* خلفية مضيئة ومتحركة */
+        /* خلفية مضيئة */
         .bg-glow {
             position: fixed;
             border-radius: 50%;
             filter: blur(100px);
             z-index: 0;
             pointer-events: none;
-            opacity: 0.4;
+            opacity: 0.35;
         }
 
         .glow-1 {
-            width: 400px;
-            height: 400px;
+            width: 350px;
+            height: 350px;
             background: #2b52ff;
-            top: -100px;
-            right: -100px;
-            animation: floatBg 10s infinite alternate ease-in-out;
+            top: -50px;
+            right: -50px;
         }
 
         .glow-2 {
             width: 350px;
             height: 350px;
             background: #8a2be2;
-            bottom: -100px;
-            left: -100px;
-            animation: floatBg 12s infinite alternate-reverse ease-in-out;
+            bottom: -50px;
+            left: -50px;
         }
 
-        @keyframes floatBg {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(30px, 40px); }
-        }
-
-        /* الحاوية الرئيسية */
         .main-container {
             position: relative;
             z-index: 2;
-            max-width: 480px;
+            max-width: 450px;
             width: 100%;
-            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* البطاقة الزجاجية */
+        /* البطاقة */
         .profile-card {
-            background: rgba(13, 17, 30, 0.7);
+            background: rgba(13, 17, 30, 0.75);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-radius: 2.5rem;
-            padding: 2.5rem 1.8rem 2rem;
+            border-radius: 2rem;
+            padding: 2.5rem 1.5rem 2rem;
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.9), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-            position: relative;
-        }
-
-        /* ===== قسم البروفايل (الصورة + الاسم) ===== */
-        .profile-section {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            margin-bottom: 2rem;
+            align-items: center; /* توسيط كل العناصر */
         }
 
-        /* إطار الصورة الفخم */
+        /* الصورة */
         .avatar-container {
             position: relative;
-            width: 130px;
-            height: 130px;
+            width: 120px;
+            height: 120px;
             margin-bottom: 1.2rem;
         }
 
-        /* حلقة متوهجة خلف الصورة */
         .avatar-ring {
             position: absolute;
-            inset: -4px;
+            inset: -3px;
             border-radius: 50%;
             background: conic-gradient(from 0deg, #2b52ff, #8a2be2, #00d4ff, #2b52ff);
-            animation: rotateRing 4s linear infinite;
+            animation: rotateRing 5s linear infinite;
             z-index: 1;
-            box-shadow: 0 0 30px rgba(43, 82, 255, 0.5);
         }
 
         @keyframes rotateRing {
             to { transform: rotate(360deg); }
         }
 
-        /* الصورة نفسها */
         .avatar-img {
             position: relative;
             width: 100%;
@@ -130,117 +105,100 @@
             border-radius: 50%;
             object-fit: cover;
             z-index: 2;
-            border: 4px solid #0d111e;
-            background: #0d111e;
-            animation: rotateRingReverse 4s linear infinite;
+            border: 3px solid #0d111e;
+            animation: rotateRingReverse 5s linear infinite;
         }
 
         @keyframes rotateRingReverse {
             to { transform: rotate(-360deg); }
         }
 
-        /* الاسم وعلامة التوثيق */
-        .name-container {
+        /* ===== تعديل تناسق الاسم والتوثيق ===== */
+        .name-row {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            margin-bottom: 0.4rem;
-            flex-wrap: wrap;
+            gap: 6px;
+            width: 100%;
+            margin-bottom: 0.5rem;
         }
 
         .user-name {
-            font-family: 'Cairo', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 800;
+            font-size: 1.35rem; /* حجم متناسق لا يكسر السطر */
+            font-weight: 900;
             color: #ffffff;
+            white-space: nowrap; /* منع الاسم من النزول لسطر جديد */
             letter-spacing: -0.5px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            line-height: 1.3;
         }
 
-        /* ===== علامة التوثيق المميزة ===== */
+        /* علامة التوثيق */
         .verified-badge {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 26px;
-            height: 26px;
-            background: #1d9bf0; /* أزرق تويتر */
+            width: 20px;
+            height: 20px;
+            background: #1d9bf0;
             border-radius: 50%;
             color: #ffffff;
-            font-size: 0.75rem;
-            box-shadow: 0 0 12px rgba(29, 155, 240, 0.6), inset 0 0 4px rgba(255, 255, 255, 0.5);
-            animation: badgePulse 2s infinite alternate ease-in-out;
-            position: relative;
-            top: 2px;
+            font-size: 0.6rem;
+            box-shadow: 0 0 10px rgba(29, 155, 240, 0.6);
+            flex-shrink: 0; /* منع تصغير العلامة */
         }
 
-        @keyframes badgePulse {
-            0% { transform: scale(1); box-shadow: 0 0 10px rgba(29, 155, 240, 0.5); }
-            100% { transform: scale(1.05); box-shadow: 0 0 20px rgba(29, 155, 240, 0.8); }
-        }
-
-        .verified-badge i {
-            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.3));
-        }
-
+        /* الوصف */
         .profile-bio {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #8b9bb4;
             display: flex;
             align-items: center;
             gap: 6px;
-            background: rgba(255,255,255,0.03);
-            padding: 0.4rem 1rem;
-            border-radius: 30px;
+            background: rgba(255,255,255,0.04);
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
             border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 2rem; /* مسافة قبل الأزرار */
         }
 
-        /* ===== قائمة الحسابات ===== */
+        /* الأزرار */
         .links-list {
+            width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 0.9rem;
-            margin-top: 1.5rem;
+            gap: 0.8rem;
         }
 
         .social-link {
             display: flex;
             align-items: center;
-            padding: 0.9rem 1.2rem;
+            padding: 0.8rem 1rem;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 1.2rem;
             text-decoration: none;
             color: inherit;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            transition: 0.3s;
         }
 
         .social-link:hover {
-            background: rgba(255, 255, 255, 0.07);
-            border-color: rgba(255, 255, 255, 0.15);
-            transform: translateX(-4px);
-            box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.5);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
         }
 
-        /* أيقونة المنصة */
+        /* الأيقونات */
         .platform-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            margin-left: 1rem;
+            font-size: 1.4rem;
+            margin-left: 0.8rem;
             flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        .icon-tiktok { background: #000000; color: #fff; border: 1px solid #25f4ee; text-shadow: 0 0 5px #25f4ee; }
+        .icon-tiktok { background: #000; color: #fff; border: 1px solid #25f4ee; }
         .icon-insta { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff; }
         .icon-fb { background: #1877f2; color: #fff; }
 
@@ -249,97 +207,79 @@
             flex: 1;
             display: flex;
             flex-direction: column;
+            align-items: flex-start; /* محاذاة النص لليمين */
         }
 
         .link-name {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: #eef2ff;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }
 
-        /* علامة توثيق صغيرة بجانب اسم المنصة */
         .link-name .verified-sm {
             color: #1d9bf0;
-            font-size: 0.85rem;
-            filter: drop-shadow(0 0 4px rgba(29,155,240,0.5));
+            font-size: 0.8rem;
         }
 
         .link-handle {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #7b8db0;
-            direction: ltr;
+            direction: ltr; /* يضمن ظهور @r_epd بشكل صحيح */
             text-align: right;
-            font-family: sans-serif;
+            width: 100%;
         }
 
         .arrow-right {
             color: #4a6cf7;
-            font-size: 0.9rem;
-            opacity: 0.5;
-            transition: 0.3s;
+            font-size: 0.8rem;
+            opacity: 0.4;
         }
 
-        .social-link:hover .arrow-right {
-            opacity: 1;
-            transform: translateX(-5px);
-        }
-
-        /* استجابة الجوال */
-        @media (max-width: 420px) {
-            .profile-card { padding: 2rem 1.2rem; }
-            .user-name { font-size: 1.5rem; }
-            .avatar-container { width: 110px; height: 110px; }
-            .verified-badge { width: 22px; height: 22px; font-size: 0.65rem; }
-            .platform-icon { width: 42px; height: 42px; font-size: 1.3rem; }
-            .link-name { font-size: 0.9rem; }
+        /* للشاشات الصغيرة جداً */
+        @media (max-width: 360px) {
+            .user-name { font-size: 1.15rem; }
+            .verified-badge { width: 18px; height: 18px; font-size: 0.5rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- تأثيرات الخلفية -->
     <div class="bg-glow glow-1"></div>
     <div class="bg-glow glow-2"></div>
 
     <div class="main-container">
         <div class="profile-card">
             
-            <!-- قسم البروفايل -->
-            <div class="profile-section">
-                <!-- الصورة -->
-                <div class="avatar-container">
-                    <div class="avatar-ring"></div>
-                    <!-- غير اسم الصورة هنا إلى logo.png -->
-                    <img src="logo.png" alt="عبدالرحيم الجياشي الشمري" class="avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=عبدالرحيم&background=0D111E&color=fff&size=130'">
-                </div>
-
-                <!-- الاسم + علامة التوثيق -->
-                <div class="name-container">
-                    <h1 class="user-name">عبدالرحيم الجياشي الشمري</h1>
-                    <span class="verified-badge" title="حساب موثق">
-                        <i class="fas fa-check"></i>
-                    </span>
-                </div>
-
-                <!-- وصف صغير -->
-                <div class="profile-bio">
-                    <i class="fas fa-crown" style="color: #f7c844;"></i>
-                    الحساب الرسمي والموثق
-                </div>
+            <!-- الصورة -->
+            <div class="avatar-container">
+                <div class="avatar-ring"></div>
+                <img src="logo.png" alt="عبدالرحيم الجياشي الشمري" class="avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=عبدالرحيم&background=0D111E&color=fff&size=120'">
             </div>
 
-            <!-- قائمة الحسابات -->
+            <!-- الاسم مع علامة التوثيق في سطر واحد متناسق -->
+            <div class="name-row">
+                <h1 class="user-name">عبدالرحيم الجياشي الشمري</h1>
+                <span class="verified-badge" title="حساب موثق">
+                    <i class="fas fa-check"></i>
+                </span>
+            </div>
+
+            <!-- الوصف -->
+            <div class="profile-bio">
+                <i class="fas fa-crown" style="color: #f7c844;"></i>
+                الحساب الرسمي والموثق
+            </div>
+
+            <!-- الأزرار -->
             <div class="links-list">
                 <!-- تيك توك -->
                 <a href="https://www.tiktok.com/@r_epd" target="_blank" class="social-link">
                     <div class="platform-icon icon-tiktok"><i class="fab fa-tiktok"></i></div>
                     <div class="link-info">
-                        <div class="link-name">
-                            تيك توك <i class="fas fa-circle-check verified-sm"></i>
-                        </div>
+                        <div class="link-name">تيك توك <i class="fas fa-circle-check verified-sm"></i></div>
                         <div class="link-handle">@r_epd</div>
                     </div>
                     <i class="fas fa-chevron-left arrow-right"></i>
@@ -349,9 +289,7 @@
                 <a href="https://www.instagram.com/alsamkark" target="_blank" class="social-link">
                     <div class="platform-icon icon-insta"><i class="fab fa-instagram"></i></div>
                     <div class="link-info">
-                        <div class="link-name">
-                            إنستغرام <i class="fas fa-circle-check verified-sm"></i>
-                        </div>
+                        <div class="link-name">إنستغرام <i class="fas fa-circle-check verified-sm"></i></div>
                         <div class="link-handle">@alsamkark</div>
                     </div>
                     <i class="fas fa-chevron-left arrow-right"></i>
@@ -361,9 +299,7 @@
                 <a href="https://www.facebook.com/share/1CCY33nfm3/" target="_blank" class="social-link">
                     <div class="platform-icon icon-fb"><i class="fab fa-facebook-f"></i></div>
                     <div class="link-info">
-                        <div class="link-name">
-                            فيسبوك <i class="fas fa-circle-check verified-sm"></i>
-                        </div>
+                        <div class="link-name">فيسبوك <i class="fas fa-circle-check verified-sm"></i></div>
                         <div class="link-handle">facebook.com/share/1CCY33nfm3</div>
                     </div>
                     <i class="fas fa-chevron-left arrow-right"></i>
