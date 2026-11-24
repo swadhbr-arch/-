@@ -53,7 +53,6 @@
             box-shadow: 0 0 50px rgba(0, 0, 0, 0.85);
         }
 
-        /* شريط حقوق المطور */
         .dev-banner {
             background: linear-gradient(90deg, rgba(0, 243, 255, 0.12), rgba(255, 0, 85, 0.12));
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -82,7 +81,6 @@
             cursor: pointer;
         }
 
-        /* الشاشات */
         .screen {
             display: none;
             flex-direction: column;
@@ -93,7 +91,6 @@
         }
         .screen.active { display: flex; }
 
-        /* 1. شاشة الدخول */
         #authScreen {
             padding: 20px;
             justify-content: center;
@@ -181,7 +178,6 @@
             border: 1px solid rgba(255, 0, 85, 0.4);
         }
 
-        /* 2. شاشة الانتظار */
         #lobbyScreen {
             justify-content: center;
             align-items: center;
@@ -204,7 +200,6 @@
         }
         @keyframes pulse { from { opacity: 0.5; } to { opacity: 1; } }
 
-        /* 3. شاشة اللعب */
         #gameScreen {
             background: var(--panel-2);
             display: none;
@@ -216,7 +211,6 @@
         }
         #gameScreen.active { display: flex; }
 
-        /* هيدر اللعبة */
         .game-header {
             display: flex;
             justify-content: space-between;
@@ -260,7 +254,6 @@
             animation: pulse 0.6s infinite alternate;
         }
 
-        /* شريط الكلمة أو التلميح */
         .word-banner {
             background: var(--panel);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -284,7 +277,6 @@
             font-size: 0.92rem;
         }
 
-        /* اللوحة (الرسم) */
         .canvas-container {
             flex: 1.15;
             background: #fff;
@@ -302,7 +294,6 @@
             display: block;
         }
 
-        /* شريط أدوات الرسم للرسام */
         .drawing-toolbar {
             position: absolute;
             bottom: 8px;
@@ -368,7 +359,6 @@
         }
         .tool-btn:active { transform: scale(0.95); }
 
-        /* الدردشة والتخمين */
         .chat-section {
             flex: 0.65;
             display: flex;
@@ -442,7 +432,6 @@
             justify-content: center;
         }
 
-        /* اختيار الكلمة */
         .word-overlay {
             position: absolute;
             inset: 0;
@@ -474,7 +463,6 @@
         }
         .word-btn:hover { background: var(--p1); transform: scale(1.02); }
 
-        /* شاشة الفائز بالجولة */
         .winner-overlay {
             position: absolute;
             inset: 0;
@@ -508,7 +496,6 @@
             </button>
         </div>
 
-        <!-- 1. شاشة الدخول -->
         <div class="screen active" id="authScreen">
             <div class="login-card">
                 <div class="title">ارسم وخمن 🎨</div>
@@ -531,7 +518,6 @@
             </div>
         </div>
 
-        <!-- 2. شاشة الانتظار -->
         <div class="screen" id="lobbyScreen">
             <h2 style="color: #fff;">غرفة الانتظار</h2>
             <div class="room-code" id="displayRoomCode">----</div>
@@ -542,10 +528,8 @@
             <p class="wait-text" id="waitMsg">بانتظار انضمام صديقك...</p>
         </div>
 
-        <!-- 3. شاشة اللعب -->
         <div class="screen" id="gameScreen">
             
-            <!-- الهيدر -->
             <div class="game-header">
                 <div class="p-info">
                     <span class="p-name p2-color" id="opName">الخصم</span>
@@ -563,17 +547,14 @@
                 </div>
             </div>
 
-            <!-- شريط الكلمة أو التلميح -->
             <div class="word-banner" id="wordBanner">
                 <span id="wordStatusText">بانتظار اختيار الكلمة...</span>
                 <button class="btn btn-sm btn-danger" id="leaveGameBtn" title="مغادرة"><i class="fas fa-times"></i></button>
             </div>
 
-            <!-- لوحة الرسم -->
             <div class="canvas-container" id="canvasContainer">
                 <canvas id="gameCanvas"></canvas>
 
-                <!-- شريط أدوات الرسام -->
                 <div class="drawing-toolbar" id="drawingToolbar">
                     <div class="color-palette" id="colorPalette">
                         <div class="color-swatch selected" data-color="#000000" style="background:#000000;"></div>
@@ -597,7 +578,6 @@
                 </div>
             </div>
 
-            <!-- الدردشة والتخمين -->
             <div class="chat-section">
                 <div class="chat-messages" id="chatMessages"></div>
                 <div class="chat-input">
@@ -606,13 +586,11 @@
                 </div>
             </div>
 
-            <!-- شاشة اختيار الكلمة (للرسام) -->
             <div class="word-overlay" id="wordOverlay">
                 <div class="word-title">اختر كلمة لترسمها:</div>
                 <div id="wordOptionsContainer" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
             </div>
 
-            <!-- شاشة نهاية الجولة -->
             <div class="winner-overlay" id="winnerOverlay">
                 <div class="winner-title" id="winnerTitle">انتهت الجولة!</div>
                 <div class="winner-sub" id="winnerSub"></div>
@@ -623,9 +601,6 @@
     </div>
 
     <script>
-        // ==========================================
-        // 1. إعدادات Firebase
-        // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyBQa9TnbuCCPqfnXY-T9t-uwag0J2WEnFI",
             authDomain: "arrahimm.firebaseapp.com",
@@ -641,9 +616,6 @@
         }
         const db = firebase.database();
 
-        // ==========================================
-        // 2. بنك الكلمات
-        // ==========================================
         const wordsBank = [
             ["تفاحة", "سيارة", "شمس", "بيت", "قطة", "طائرة", "موزة", "سمكة"],
             ["رجل يطير", "قطة تسبح", "بيتزا تطاردك", "وحش فضائي", "دماغ يفكر", "بطيخ يبكي"],
@@ -651,14 +623,11 @@
             ["حصان بجناحين", "برجر يمشي", "هاتف يغضب", "روبوت يحب", "ساحر يطبخ", "سفينة فضاء"]
         ];
 
-        // ==========================================
-        // 3. المتغيرات العامة
-        // ==========================================
         let myId = 'player_' + Math.floor(Math.random() * 100000);
         let myName = "";
         let currentRoom = "";
         let roomData = {};
-        let myRole = ""; // 'p1' أو 'p2'
+        let myRole = "";
         let isDrawer = false;
 
         const TOTAL_ROUNDS = 5;
@@ -667,7 +636,6 @@
         let remainingSeconds = ROUND_SECONDS;
         let soundEnabled = true;
 
-        // إعدادات الفرشاة والكانفاس
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         let isDrawing = false;
@@ -676,7 +644,6 @@
         let brushSize = 6;
         let lastSentTime = 0;
 
-        // عناصر الواجهة
         const authScreen = document.getElementById('authScreen');
         const lobbyScreen = document.getElementById('lobbyScreen');
         const gameScreen = document.getElementById('gameScreen');
@@ -689,9 +656,6 @@
 
         let lastMessageCount = 0;
 
-        // ==========================================
-        // 4. مؤثرات صوتية بسيطة (Web Audio API)
-        // ==========================================
         function playTone(freq = 520, duration = 0.14, type = 'sine') {
             if (!soundEnabled) return;
             try {
@@ -715,9 +679,6 @@
             document.getElementById('soundIcon').className = soundEnabled ? 'fas fa-volume-up' : 'fas fa-volume-mute';
         });
 
-        // ==========================================
-        // 5. إنشاء ودخول الغرف
-        // ==========================================
         document.getElementById('createRoomBtn').addEventListener('click', () => {
             myName = document.getElementById('playerName').value.trim();
             if (!myName) return alert("الرجاء كتابة اسمك أولاً");
@@ -726,7 +687,8 @@
             currentRoom = code;
             myRole = 'p1';
 
-            db.ref('rooms/' + code).set({
+            const roomRef = db.ref('rooms/' + code);
+            roomRef.set({
                 host: myId,
                 status: 'waiting',
                 round: 1,
@@ -740,7 +702,10 @@
                 strokes: null,
                 liveStroke: null,
                 winner: null
-            }).then(() => enterLobby());
+            }).then(() => {
+                roomRef.onDisconnect().remove();
+                enterLobby();
+            });
         });
 
         document.getElementById('joinRoomBtn').addEventListener('click', () => {
@@ -752,13 +717,21 @@
             currentRoom = code;
             myRole = 'p2';
 
-            db.ref('rooms/' + code).once('value').then((snapshot) => {
-                if (snapshot.exists()) {
-                    db.ref(`rooms/${code}/players/p2`).set({ name: myName, score: 0 });
-                    enterLobby();
-                } else {
-                    alert("الغرفة غير موجودة.");
+            const roomRef = db.ref('rooms/' + code);
+            roomRef.once('value').then((snapshot) => {
+                if (!snapshot.exists()) {
+                    return alert("الغرفة غير موجودة.");
                 }
+                const data = snapshot.val();
+                const updates = {};
+                updates['players/p2'] = { name: myName, score: 0 };
+                if (data.status === 'waiting') {
+                    updates['status'] = 'playing';
+                }
+                roomRef.update(updates).then(() => {
+                    roomRef.child('players/p2').onDisconnect().remove();
+                    enterLobby();
+                });
             });
         });
 
@@ -769,16 +742,22 @@
 
         function leaveRoom() {
             if (currentRoom) {
-                db.ref('rooms/' + currentRoom).off();
+                const roomRef = db.ref('rooms/' + currentRoom);
+                roomRef.off();
+                roomRef.onDisconnect().cancel();
                 if (myRole === 'p2') {
-                    db.ref(`rooms/${currentRoom}/players/p2`).remove();
+                    roomRef.child('players/p2').remove();
                 } else if (myRole === 'p1') {
-                    db.ref(`rooms/${currentRoom}`).remove();
+                    roomRef.remove();
                 }
             }
             clearInterval(timerInterval);
             currentRoom = "";
             myRole = "";
+            roomData = {};
+            lastMessageCount = 0;
+            chatMessages.innerHTML = '';
+            clearCanvas();
             gameScreen.classList.remove('active');
             lobbyScreen.classList.remove('active');
             authScreen.classList.add('active');
@@ -794,27 +773,29 @@
             listenToRoom();
         }
 
-        // ==========================================
-        // 6. الاستماع للغرفة
-        // ==========================================
         function listenToRoom() {
-            db.ref('rooms/' + currentRoom).on('value', (snapshot) => {
+            const roomRef = db.ref('rooms/' + currentRoom);
+            roomRef.off();
+            roomRef.on('value', (snapshot) => {
                 if (!snapshot.exists()) {
                     alert("تم إغلاق الغرفة.");
                     leaveRoom();
                     return;
                 }
-                roomData = snapshot.val();
+                roomData = snapshot.val() || {};
 
-                if (roomData.status === 'waiting' && roomData.players && roomData.players.p2) {
-                    db.ref(`rooms/${currentRoom}`).update({ status: 'playing' });
+                if (myRole === 'p1' && roomData.status === 'waiting' && roomData.players && roomData.players.p2) {
+                    roomRef.update({ status: 'playing' });
                 }
 
-                if (roomData.status === 'playing') {
+                if (roomData.status === 'playing' || (roomData.players && roomData.players.p1 && roomData.players.p2)) {
                     if (!gameScreen.classList.contains('active')) {
                         lobbyScreen.classList.remove('active');
                         gameScreen.classList.add('active');
-                        resizeCanvas();
+                        requestAnimationFrame(() => {
+                            resizeCanvas();
+                            renderCanvasFromFirebase();
+                        });
                         playTone(660, 0.15);
                     }
                     updateGameState();
@@ -824,9 +805,6 @@
             });
         }
 
-        // ==========================================
-        // 7. إدارة الجولات والمؤقت والتلميحات
-        // ==========================================
         function updateGameState() {
             const p1 = roomData.players?.p1 || { name: 'اللاعب 1', score: 0 };
             const p2 = roomData.players?.p2 || { name: 'الخصم', score: 0 };
@@ -838,13 +816,13 @@
             document.getElementById('myScore').textContent = meObj.score;
             document.getElementById('opName').textContent = opObj.name;
             document.getElementById('opScore').textContent = opObj.score;
-            document.getElementById('roundDisplay').textContent = `الجولة ${roomData.round} / ${TOTAL_ROUNDS}`;
+            document.getElementById('roundDisplay').textContent = `الجولة ${roomData.round || 1} / ${TOTAL_ROUNDS}`;
 
             isDrawer = (roomData.turn === myRole);
 
             if (isDrawer) {
                 drawingToolbar.classList.add('active');
-                if (!roomData.word && !wordOverlay.classList.contains('show') && !roomData.winner) {
+                if (!roomData.word && !roomData.winner && !wordOverlay.classList.contains('show')) {
                     showWordOptions();
                 }
             } else {
@@ -856,6 +834,7 @@
             updateWordBanner();
 
             if (roomData.winner) {
+                wordOverlay.classList.remove('show');
                 if (!winnerOverlay.classList.contains('show')) {
                     showRoundWinner();
                 }
@@ -910,7 +889,7 @@
             }
 
             if (isDrawer) {
-                wordStatusText.innerHTML = `كلمتك: <span class="secret-word">${roomData.word}</span>`;
+                wordStatusText.innerHTML = `كلمتك: <span class="secret-word">${escapeHtml(roomData.word)}</span>`;
             } else {
                 const cleanWord = roomData.word;
                 const chars = [...cleanWord];
@@ -918,7 +897,7 @@
 
                 const hint = chars.map((ch, idx) => {
                     if (ch === ' ') return '  ';
-                    if (idx < revealCount) return ch;
+                    if (idx < revealCount) return escapeHtml(ch);
                     return 'ـ';
                 }).join(' ');
 
@@ -927,7 +906,7 @@
         }
 
         function showWordOptions() {
-            const levelIndex = Math.floor((roomData.round - 1) / 2);
+            const levelIndex = Math.floor(((roomData.round || 1) - 1) / 2);
             const words = wordsBank[Math.min(levelIndex, wordsBank.length - 1)];
             const shuffled = [...words].sort(() => 0.5 - Math.random()).slice(0, 3);
 
@@ -939,6 +918,8 @@
                 btn.className = 'word-btn';
                 btn.textContent = word;
                 btn.onclick = () => {
+                    wordOverlay.classList.remove('show');
+                    clearCanvas();
                     db.ref(`rooms/${currentRoom}`).update({
                         word: word,
                         strokes: null,
@@ -946,8 +927,6 @@
                         winner: null,
                         roundStartTime: Date.now()
                     });
-                    wordOverlay.classList.remove('show');
-                    clearCanvas();
                     playTone(740, 0.12);
                 };
                 container.appendChild(btn);
@@ -973,13 +952,13 @@
 
             const nextBtn = document.getElementById('nextRoundBtn');
             nextBtn.style.display = (myRole === 'p1') ? 'block' : 'none';
-            nextBtn.textContent = roomData.round >= TOTAL_ROUNDS ? 'عرض النتيجة النهائية' : 'الجولة التالية';
+            nextBtn.textContent = (roomData.round || 1) >= TOTAL_ROUNDS ? 'عرض النتيجة النهائية' : 'الجولة التالية';
         }
 
         document.getElementById('nextRoundBtn').addEventListener('click', () => {
             if (myRole !== 'p1') return;
 
-            if (roomData.round >= TOTAL_ROUNDS) {
+            if ((roomData.round || 1) >= TOTAL_ROUNDS) {
                 const p1 = roomData.players.p1;
                 const p2 = roomData.players.p2 || { name: 'الخصم', score: 0 };
                 const msg = p1.score === p2.score
@@ -992,8 +971,9 @@
             }
 
             const nextTurn = roomData.turn === 'p1' ? 'p2' : 'p1';
+            clearCanvas();
             db.ref('rooms/' + currentRoom).update({
-                round: roomData.round + 1,
+                round: (roomData.round || 1) + 1,
                 turn: nextTurn,
                 word: null,
                 winner: null,
@@ -1001,12 +981,8 @@
                 strokes: null,
                 liveStroke: null
             });
-            clearCanvas();
         });
 
-        // ==========================================
-        // 8. الدردشة والتخمين
-        // ==========================================
         document.getElementById('sendChatBtn').addEventListener('click', sendMessage);
         document.getElementById('chatInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') sendMessage();
@@ -1024,8 +1000,8 @@
                     const guesserRole = myRole;
                     const drawerRole = myRole === 'p1' ? 'p2' : 'p1';
 
-                    const gScore = (roomData.players[guesserRole]?.score || 0) + 10;
-                    const dScore = (roomData.players[drawerRole]?.score || 0) + 5;
+                    const gScore = (roomData.players?.[guesserRole]?.score || 0) + 10;
+                    const dScore = (roomData.players?.[drawerRole]?.score || 0) + 5;
 
                     const updates = {};
                     updates[`rooms/${currentRoom}/players/${guesserRole}/score`] = gScore;
@@ -1082,9 +1058,6 @@
                 .replace(/"/g, '&quot;');
         }
 
-        // ==========================================
-        // 9. الرسم الحي التفاعلي (Canvas)
-        // ==========================================
         document.querySelectorAll('.color-swatch').forEach(swatch => {
             swatch.addEventListener('click', () => {
                 document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
@@ -1111,12 +1084,19 @@
         function resizeCanvas() {
             const parent = canvas.parentElement;
             if (!parent || parent.clientWidth === 0 || parent.clientHeight === 0) return;
-            canvas.width = parent.clientWidth;
-            canvas.height = parent.clientHeight;
-            redrawLocalCanvas();
+            const newW = parent.clientWidth;
+            const newH = parent.clientHeight;
+            if (canvas.width !== newW || canvas.height !== newH) {
+                canvas.width = newW;
+                canvas.height = newH;
+                redrawLocalCanvas();
+            }
         }
 
-        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            renderCanvasFromFirebase();
+        });
 
         function getCoordinates(e) {
             const rect = canvas.getBoundingClientRect();
@@ -1125,14 +1105,15 @@
             const x = clientX - rect.left;
             const y = clientY - rect.top;
             return {
-                x: Math.max(0, Math.min(1, x / rect.width)),
-                y: Math.max(0, Math.min(1, y / rect.height))
+                x: Math.max(0, Math.min(1, x / (rect.width || 1))),
+                y: Math.max(0, Math.min(1, y / (rect.height || 1)))
             };
         }
 
         canvas.addEventListener('pointerdown', (e) => {
             if (!isDrawer || !roomData.word || roomData.winner) return;
             e.preventDefault();
+            resizeCanvas();
             try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
             isDrawing = true;
             const pos = getCoordinates(e);
@@ -1154,9 +1135,9 @@
             drawSegment(prevPos, pos, currentStroke.color, currentStroke.size);
 
             const now = Date.now();
-            if (now - lastSentTime > 30 && pts.length >= 2) {
+            if (now - lastSentTime > 45 && pts.length >= 2 && currentRoom) {
                 lastSentTime = now;
-                db.ref(`rooms/${currentRoom}/liveStroke`).set(currentStroke);
+                db.ref(`rooms/${currentRoom}/liveStroke`).set(currentStroke).catch(() => {});
             }
         });
 
@@ -1167,18 +1148,20 @@
                 try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
             }
 
-            if (currentStroke && currentStroke.points.length > 1) {
+            if (currentStroke && currentStroke.points.length > 1 && currentRoom) {
                 db.ref(`rooms/${currentRoom}/strokes`).push(currentStroke);
             }
             currentStroke = null;
-            db.ref(`rooms/${currentRoom}/liveStroke`).remove();
+            if (currentRoom) {
+                db.ref(`rooms/${currentRoom}/liveStroke`).remove();
+            }
         }
 
         canvas.addEventListener('pointerup', finishStroke);
         canvas.addEventListener('pointercancel', finishStroke);
 
         function drawSegment(from, to, color, size) {
-            if (!from || !to) return;
+            if (!from || !to || canvas.width === 0 || canvas.height === 0) return;
             applyBrushStyle(color, size);
             ctx.beginPath();
             ctx.moveTo(from.x * canvas.width, from.y * canvas.height);
@@ -1187,7 +1170,7 @@
         }
 
         function drawStrokeObject(strokeObj) {
-            if (!strokeObj) return;
+            if (!strokeObj || canvas.width === 0 || canvas.height === 0) return;
             const pts = Array.isArray(strokeObj.points)
                 ? strokeObj.points
                 : Object.values(strokeObj.points || {});
@@ -1205,8 +1188,12 @@
         function renderCanvasFromFirebase() {
             if (isDrawer) return;
 
+            resizeCanvas();
             if (canvas.width === 0 || canvas.height === 0) {
-                resizeCanvas();
+                setTimeout(() => {
+                    resizeCanvas();
+                    redrawLocalCanvas();
+                }, 80);
                 return;
             }
 
@@ -1229,7 +1216,7 @@
         }
 
         document.getElementById('undoBtn').addEventListener('click', () => {
-            if (!isDrawer || !roomData.strokes) return;
+            if (!isDrawer || !roomData.strokes || !currentRoom) return;
             const entries = Object.entries(roomData.strokes);
             if (entries.length === 0) return;
             const lastKey = entries[entries.length - 1][0];
@@ -1239,7 +1226,7 @@
         });
 
         document.getElementById('clearBtn').addEventListener('click', () => {
-            if (!isDrawer) return;
+            if (!isDrawer || !currentRoom) return;
             db.ref(`rooms/${currentRoom}/strokes`).remove();
             db.ref(`rooms/${currentRoom}/liveStroke`).remove();
             clearCanvas();
