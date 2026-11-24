@@ -2,314 +2,606 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عبدالرحيم الجياشي الشمري | الحسابات الرسمية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>صدام الألوان | Color Clash</title>
     
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@700;800;900&display=swap" rel="stylesheet">
+    <!-- مكتبة Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg: #05050a; --panel: #12121a;
+            --my-color: #00f3ff; --op-color: #ff0055; --gold: #ffcc00;
+            --text-muted: #8892b0;
+            /* ألوان الأزرار */
+            --c-red: #ff0055;
+            --c-blue: #00aaff;
+            --c-green: #00ff66;
+            --c-yellow: #ffcc00;
         }
 
-        body {
-            font-family: 'Tajawal', sans-serif;
-            min-height: 100vh;
-            background: #05070e;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1.2rem;
-            overflow-x: hidden;
-            position: relative;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        html, body {
+            height: 100%; width: 100%; overflow: hidden; background-color: var(--bg); color: #fff;
+            background-image: radial-gradient(circle at center, rgba(255,255,255,0.03) 0%, transparent 70%);
         }
 
-        /* خلفية مضيئة */
-        .bg-glow {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(100px);
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.35;
+        .app-container {
+            position: relative; width: 100%; max-width: 500px; height: 100dvh; 
+            margin: 0 auto; display: flex; flex-direction: column;
+            background: var(--bg); box-shadow: 0 0 50px rgba(0,0,0,0.8);
         }
 
-        .glow-1 {
-            width: 350px;
-            height: 350px;
-            background: #2b52ff;
-            top: -50px;
-            right: -50px;
+        /* ===== شريط حقوق المطور ===== */
+        .dev-banner {
+            background: linear-gradient(90deg, rgba(0,243,255,0.1), rgba(255,0,85,0.1));
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            text-align: center; padding: 8px; font-size: 0.8rem; font-weight: 700;
+            z-index: 10;
+        }
+        .dev-banner span { color: var(--my-color); font-size: 0.95rem; text-shadow: 0 0 10px rgba(0,243,255,0.5);}
+
+        /* ===== الشاشات ===== */
+        .screen { display: none; flex-direction: column; flex: 1; height: 100%; overflow: hidden; }
+        .screen.active { display: flex; }
+
+        /* ===== 1. شاشة الدخول ===== */
+        #authScreen { padding: 20px; justify-content: center; align-items: center; }
+        
+        .login-card {
+            width: 100%; background: rgba(255,255,255,0.02); padding: 30px 20px; border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            text-align: center;
         }
 
-        .glow-2 {
-            width: 350px;
-            height: 350px;
-            background: #8a2be2;
-            bottom: -50px;
-            left: -50px;
+        .title { font-size: 2.2rem; color: #fff; font-weight: 900; margin-bottom: 5px; text-shadow: 0 0 20px rgba(255,255,255,0.3);}
+        .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px; }
+
+        .input-group { margin-bottom: 15px; text-align: right; }
+        .input-group label { display: block; color: #ccc; margin-bottom: 5px; font-weight: 700; font-size: 0.85rem;}
+        .input-group input {
+            width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.4); color: #fff; font-size: 1rem; outline: none; text-align: center;
+        }
+        .input-group input:focus { border-color: var(--my-color); }
+
+        .btn {
+            padding: 14px; font-size: 1rem; font-weight: 900; color: #000; background: var(--my-color);
+            border: none; border-radius: 12px; cursor: pointer; transition: 0.2s; width: 100%;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn:hover { box-shadow: 0 0 20px var(--my-color); transform: scale(1.02);}
+        .btn-outline { background: transparent; color: var(--op-color); border: 2px solid var(--op-color); margin-top: 10px;}
+        .btn-outline:hover { background: var(--op-color); color: #fff; box-shadow: 0 0 20px var(--op-color);}
+
+        /* ===== 2. شاشة الانتظار ===== */
+        #lobbyScreen { justify-content: center; align-items: center; text-align: center; padding: 20px;}
+        .room-code { font-size: 3rem; font-weight: 900; color: var(--gold); letter-spacing: 8px; margin: 20px 0; text-shadow: 0 0 20px rgba(255,204,0,0.4);}
+        .wait-text { color: var(--text-muted); font-size: 1rem; animation: pulse 1.5s infinite alternate;}
+        @keyframes pulse { from { opacity: 0.5; } to { opacity: 1; } }
+
+        /* ===== 3. شاشة اللعب ===== */
+        #gameScreen { background: #000; }
+        
+        .game-header {
+            padding: 15px; display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent); z-index: 10;
+        }
+        .player-info { display: flex; flex-direction: column; align-items: center; }
+        .p-name { font-size: 0.8rem; font-weight: 700; color: #ccc; }
+        .p-score { font-size: 1.5rem; font-weight: 900; }
+        .my-score { color: var(--my-color); text-shadow: 0 0 10px var(--my-color); }
+        .op-score { color: var(--op-color); text-shadow: 0 0 10px var(--op-color); }
+        
+        .round-info { font-size: 0.9rem; color: #fff; background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 20px;}
+
+        /* منطقة اللعب */
+        .play-area {
+            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 20px; position: relative;
         }
 
-        .main-container {
-            position: relative;
-            z-index: 2;
-            max-width: 450px;
-            width: 100%;
+        /* الكلمة المتوهجة */
+        .color-word {
+            font-size: 5rem; font-weight: 900; letter-spacing: 2px;
+            text-shadow: 0 0 30px currentColor, 0 0 60px currentColor;
+            transition: transform 0.1s;
+            animation: popWord 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popWord { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* شبكة الأزرار (4 أزرار) */
+        .buttons-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+            width: 100%; max-width: 350px; margin-top: 50px;
         }
 
-        /* البطاقة */
-        .profile-card {
-            background: rgba(13, 17, 30, 0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 2rem;
-            padding: 2.5rem 1.5rem 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .color-btn {
+            padding: 25px 10px; border-radius: 20px; border: none; font-size: 1.2rem; font-weight: 900;
+            cursor: pointer; transition: 0.2s; color: #000; box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            text-shadow: 0 1px 2px rgba(255,255,255,0.3);
         }
 
-        /* الصورة الثابتة */
-        .avatar-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin-bottom: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .color-btn:active { transform: scale(0.95); }
+        
+        .btn-red { background: var(--c-red); color: #fff; text-shadow: none;}
+        .btn-blue { background: var(--c-blue); }
+        .btn-green { background: var(--c-green); }
+        .btn-yellow { background: var(--c-yellow); }
+
+        /* رسالة عائمة عند الإجابة */
+        .answer-popup {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 4rem; z-index: 20; pointer-events: none; animation: popUp 0.8s ease-out forwards;
+        }
+        @keyframes popUp {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+            100% { transform: translate(-50%, -150%) scale(1.5); opacity: 0; }
         }
 
-        /* الحلقة الدوارة (خلف الصورة) */
-        .avatar-ring {
-            position: absolute;
-            inset: -4px;
-            border-radius: 50%;
-            background: conic-gradient(from 0deg, #2b52ff, #8a2be2, #00d4ff, #2b52ff);
-            animation: rotateRing 4s linear infinite;
-            z-index: 1;
-            box-shadow: 0 0 20px rgba(43, 82, 255, 0.4);
+        /* شاشة النتيجة */
+        .winner-overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 50; opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
-
-        @keyframes rotateRing {
-            to { transform: rotate(360deg); }
-        }
-
-        /* الصورة نفسها - ثابتة لا تدور */
-        .avatar-img {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            z-index: 2;
-            border: 4px solid #0d111e;
-            background: #0d111e;
-        }
-
-        /* ===== تناسق الاسم والتوثيق ===== */
-        .name-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            width: 100%;
-            margin-bottom: 0.5rem;
-        }
-
-        .user-name {
-            font-size: 1.35rem;
-            font-weight: 900;
-            color: #ffffff;
-            white-space: nowrap;
-            letter-spacing: -0.5px;
-        }
-
-        /* علامة التوثيق */
-        .verified-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 20px;
-            height: 20px;
-            background: #1d9bf0;
-            border-radius: 50%;
-            color: #ffffff;
-            font-size: 0.6rem;
-            box-shadow: 0 0 10px rgba(29, 155, 240, 0.6);
-            flex-shrink: 0;
-        }
-
-        /* الوصف */
-        .profile-bio {
-            font-size: 0.8rem;
-            color: #8b9bb4;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255,255,255,0.04);
-            padding: 0.35rem 1rem;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
-            margin-bottom: 2rem;
-        }
-
-        /* الأزرار */
-        .links-list {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-
-        .social-link {
-            display: flex;
-            align-items: center;
-            padding: 0.8rem 1rem;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 1.2rem;
-            text-decoration: none;
-            color: inherit;
-            transition: 0.3s;
-        }
-
-        .social-link:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-2px);
-        }
-
-        /* الأيقونات */
-        .platform-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            margin-left: 0.8rem;
-            flex-shrink: 0;
-        }
-
-        .icon-tiktok { background: #000; color: #fff; border: 1px solid #25f4ee; }
-        .icon-insta { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff; }
-        .icon-fb { background: #1877f2; color: #fff; }
-
-        /* معلومات الحساب */
-        .link-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .link-name {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: #eef2ff;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .link-name .verified-sm {
-            color: #1d9bf0;
-            font-size: 0.8rem;
-        }
-
-        .link-handle {
-            font-size: 0.75rem;
-            color: #7b8db0;
-            direction: ltr;
-            text-align: right;
-            width: 100%;
-        }
-
-        .arrow-right {
-            color: #4a6cf7;
-            font-size: 0.8rem;
-            opacity: 0.4;
-        }
-
-        /* للشاشات الصغيرة جداً */
-        @media (max-width: 360px) {
-            .user-name { font-size: 1.15rem; }
-            .verified-badge { width: 18px; height: 18px; font-size: 0.5rem; }
-        }
+        .winner-overlay.show { opacity: 1; pointer-events: auto; }
+        .winner-title { font-size: 2.5rem; font-weight: 900; margin-bottom: 10px; }
+        .win-color { color: var(--my-color); text-shadow: 0 0 20px var(--my-color); }
+        .lose-color { color: var(--op-color); text-shadow: 0 0 20px var(--op-color); }
+        .draw-color { color: var(--gold); text-shadow: 0 0 20px var(--gold); }
     </style>
 </head>
 <body>
 
-    <div class="bg-glow glow-1"></div>
-    <div class="bg-glow glow-2"></div>
+    <div class="app-container">
+        
+        <!-- شريط حقوق المطور -->
+        <div class="dev-banner">
+            تطوير المبدع: <span>عبدالرحيم الجياشي الشمري</span>
+        </div>
 
-    <div class="main-container">
-        <div class="profile-card">
+        <!-- 1. شاشة الدخول -->
+        <div class="screen active" id="authScreen">
+            <div class="login-card">
+                <div class="title">صدام الألوان 🎨</div>
+                <div class="subtitle">هل يستطيع عقلك تجاوز الخداع؟<br>اختر <b>لون</b> الكلمة، وليس معناها!</div>
+                
+                <div class="input-group">
+                    <label>اسمك:</label>
+                    <input type="text" id="playerName" placeholder="اكتب اسمك..." maxlength="15">
+                </div>
+                
+                <button class="btn" id="createRoomBtn"><i class="fas fa-plus"></i> إنشاء غرفة</button>
+                
+                <div style="text-align: center; margin: 15px 0; color: #555; font-weight:bold;">- أو -</div>
+                
+                <div class="input-group">
+                    <label>كود الغرفة (للدخول):</label>
+                    <input type="text" id="roomCodeInput" placeholder="مثال: A7B2" style="text-transform: uppercase;" maxlength="6">
+                </div>
+                <button class="btn btn-outline" id="joinRoomBtn"><i class="fas fa-sign-in-alt"></i> دخول الغرفة</button>
+            </div>
+        </div>
+
+        <!-- 2. شاشة الانتظار -->
+        <div class="screen" id="lobbyScreen">
+            <h2 style="color: #fff; margin-bottom: 10px;">غرفة التحدي</h2>
+            <div class="room-code" id="displayRoomCode">----</div>
+            <p class="wait-text" id="waitMsg">بانتظار انضمام صديقك...</p>
+        </div>
+
+        <!-- 3. شاشة اللعب -->
+        <div class="screen" id="gameScreen">
             
-            <!-- الصورة الثابتة مع الحلقة الدوارة -->
-            <div class="avatar-container">
-                <div class="avatar-ring"></div>
-                <!-- تأكد من رفع صورة logo.png على جيت هوب -->
-                <img src="logo.png" alt="عبدالرحيم الجياشي الشمري" class="avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=عبدالرحيم&background=0D111E&color=fff&size=120'">
+            <!-- الهيدر -->
+            <div class="game-header">
+                <div class="player-info">
+                    <span class="p-name" id="opNameDisplay">الخصم</span>
+                    <span class="p-score op-score" id="opScoreDisplay">0</span>
+                </div>
+                <div class="round-info" id="roundDisplay">الجولة 1 / 10</div>
+                <div class="player-info">
+                    <span class="p-name" id="myNameDisplay">أنت</span>
+                    <span class="p-score my-score" id="myScoreDisplay">0</span>
+                </div>
             </div>
 
-            <!-- الاسم مع علامة التوثيق -->
-            <div class="name-row">
-                <h1 class="user-name">عبدالرحيم الجياشي الشمري</h1>
-                <span class="verified-badge" title="حساب موثق">
-                    <i class="fas fa-check"></i>
-                </span>
+            <!-- الساحة -->
+            <div class="play-area" id="playArea">
+                <div class="color-word" id="colorWord">استعد...</div>
+                
+                <div class="buttons-grid" id="buttonsGrid">
+                    <button class="color-btn btn-red" data-color="red">أحمر</button>
+                    <button class="color-btn btn-blue" data-color="blue">أزرق</button>
+                    <button class="color-btn btn-green" data-color="green">أخضر</button>
+                    <button class="color-btn btn-yellow" data-color="yellow">أصفر</button>
+                </div>
             </div>
 
-            <!-- الوصف -->
-            <div class="profile-bio">
-                <i class="fas fa-crown" style="color: #f7c844;"></i>
-                الحساب الرسمي والموثق
-            </div>
-
-            <!-- الأزرار -->
-            <div class="links-list">
-                <!-- تيك توك -->
-                <a href="https://www.tiktok.com/@r_epd" target="_blank" class="social-link">
-                    <div class="platform-icon icon-tiktok"><i class="fab fa-tiktok"></i></div>
-                    <div class="link-info">
-                        <div class="link-name">تيك توك <i class="fas fa-circle-check verified-sm"></i></div>
-                        <div class="link-handle">@r_epd</div>
-                    </div>
-                    <i class="fas fa-chevron-left arrow-right"></i>
-                </a>
-
-                <!-- انستغرام -->
-                <a href="https://www.instagram.com/alsamkark" target="_blank" class="social-link">
-                    <div class="platform-icon icon-insta"><i class="fab fa-instagram"></i></div>
-                    <div class="link-info">
-                        <div class="link-name">إنستغرام <i class="fas fa-circle-check verified-sm"></i></div>
-                        <div class="link-handle">@alsamkark</div>
-                    </div>
-                    <i class="fas fa-chevron-left arrow-right"></i>
-                </a>
-
-                <!-- فيسبوك -->
-                <a href="https://www.facebook.com/share/1CCY33nfm3/" target="_blank" class="social-link">
-                    <div class="platform-icon icon-fb"><i class="fab fa-facebook-f"></i></div>
-                    <div class="link-info">
-                        <div class="link-name">فيسبوك <i class="fas fa-circle-check verified-sm"></i></div>
-                        <div class="link-handle">facebook.com/share/1CCY33nfm3</div>
-                    </div>
-                    <i class="fas fa-chevron-left arrow-right"></i>
-                </a>
+            <!-- شاشة النتيجة -->
+            <div class="winner-overlay" id="winnerOverlay">
+                <div class="winner-title" id="winnerTitle">لقد فزت! 🏆</div>
+                <div style="font-size: 1.2rem; color: #aaa; margin-bottom: 30px;" id="finalScoreText"></div>
+                <button class="btn" id="closeOverlayBtn" style="width: 200px;">العودة للغرفة</button>
             </div>
 
         </div>
     </div>
+
+    <script>
+        // ==========================================
+        // 1. إعدادات Firebase
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBQa9TnbuCCPqfnXY-T9t-uwag0J2WEnFI",
+            authDomain: "arrahimm.firebaseapp.com",
+            databaseURL: "https://arrahimm-default-rtdb.firebaseio.com/",
+            projectId: "arrahimm",
+            storageBucket: "arrahimm.firebasestorage.app",
+            messagingSenderId: "150237867312",
+            appId: "1:150237867312:web:364d67877f9ff4d2bbacf5"
+        };
+
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const db = firebase.database();
+
+        // ==========================================
+        // 2. بيانات الألوان والكلمات
+        // ==========================================
+        const colorsData = {
+            red: { name: 'أحمر', hex: '#ff0055', class: 'btn-red' },
+            blue: { name: 'أزرق', hex: '#00aaff', class: 'btn-blue' },
+            green: { name: 'أخضر', hex: '#00ff66', class: 'btn-green' },
+            yellow: { name: 'أصفر', hex: '#ffcc00', class: 'btn-yellow' }
+        };
+        const colorKeys = Object.keys(colorsData);
+        
+        const TOTAL_ROUNDS = 10;
+
+        // ==========================================
+        // 3. المتغيرات
+        // ==========================================
+        let myId = 'player_' + Math.floor(Math.random() * 10000);
+        let myName = "";
+        let currentRoom = "";
+        let roomData = {};
+        let hasAnsweredThisRound = false;
+        let roundTransitionTimeout;
+
+        // العناصر
+        const authScreen = document.getElementById('authScreen');
+        const lobbyScreen = document.getElementById('lobbyScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const winnerOverlay = document.getElementById('winnerOverlay');
+        const colorWord = document.getElementById('colorWord');
+        const playArea = document.getElementById('playArea');
+        const buttons = document.querySelectorAll('.color-btn');
+
+        // الأصوات
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+        
+        function playSound(type) {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            if(type === 'correct') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            } else if(type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            } else if(type === 'win') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            }
+
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        }
+
+        // ==========================================
+        // 4. إنشاء ودخول الغرف
+        // ==========================================
+        document.getElementById('createRoomBtn').addEventListener('click', () => {
+            myName = document.getElementById('playerName').value.trim();
+            if (!myName) return alert("الرجاء كتابة اسمك أولاً");
+            
+            const code = Math.random().toString(36).substring(2, 6).toUpperCase();
+            currentRoom = code;
+            
+            db.ref('rooms/' + code).set({
+                host: myId,
+                status: 'waiting',
+                players: { [myId]: { name: myName, score: 0 } },
+                round: 1,
+                wordData: null,
+                answeredBy: null,
+                winner: null
+            }).then(() => enterLobby());
+        });
+
+        document.getElementById('joinRoomBtn').addEventListener('click', () => {
+            myName = document.getElementById('playerName').value.trim();
+            const code = document.getElementById('roomCodeInput').value.trim().toUpperCase();
+            if (!myName) return alert("الرجاء كتابة اسمك أولاً");
+            if (!code) return alert("الرجاء كتابة كود الغرفة");
+
+            currentRoom = code;
+            
+            db.ref('rooms/' + code).once('value').then((snapshot) => {
+                if (snapshot.exists()) {
+                    db.ref(`rooms/${code}/players/${myId}`).set({ name: myName, score: 0 });
+                    enterLobby();
+                } else {
+                    alert("الغرفة غير موجودة.");
+                }
+            });
+        });
+
+        function enterLobby() {
+            authScreen.classList.remove('active');
+            lobbyScreen.classList.add('active');
+            document.getElementById('displayRoomCode').textContent = currentRoom;
+            listenToRoom();
+        }
+
+        // ==========================================
+        // 5. الاستماع للغرفة
+        // ==========================================
+        function listenToRoom() {
+            db.ref('rooms/' + currentRoom).on('value', (snapshot) => {
+                roomData = snapshot.val();
+                if (!roomData) return;
+
+                let playerCount = Object.keys(roomData.players).length;
+
+                // بدء اللعب
+                if (roomData.status === 'waiting' && playerCount === 2) {
+                    db.ref(`rooms/${currentRoom}/status`).set('playing');
+                }
+
+                if (roomData.status === 'playing') {
+                    if (!gameScreen.classList.contains('active')) {
+                        lobbyScreen.classList.remove('active');
+                        gameScreen.classList.add('active');
+                    }
+                    updateGameUI();
+                    processRound();
+                }
+
+                if (roomData.status === 'finished') {
+                    showResults();
+                }
+            });
+        }
+
+        // ==========================================
+        // 6. منطق اللعب
+        // ==========================================
+        function updateGameUI() {
+            // تحديث النقاط والأسماء
+            for (let pid in roomData.players) {
+                if (pid === myId) {
+                    document.getElementById('myNameDisplay').textContent = roomData.players[pid].name;
+                    document.getElementById('myScoreDisplay').textContent = roomData.players[pid].score || 0;
+                } else {
+                    document.getElementById('opNameDisplay').textContent = roomData.players[pid].name;
+                    document.getElementById('opScoreDisplay').textContent = roomData.players[pid].score || 0;
+                }
+            }
+            document.getElementById('roundDisplay').textContent = `الجولة ${roomData.round} / ${TOTAL_ROUNDS}`;
+        }
+
+        function processRound() {
+            // إذا لم يتم توليد كلمة لهذه الجولة بعد
+            if (!roomData.wordData) {
+                if (roomData.host === myId) {
+                    generateNewWord();
+                }
+                return;
+            }
+
+            // عرض الكلمة
+            const wd = roomData.wordData;
+            colorWord.textContent = wd.text;
+            colorWord.style.color = wd.colorHex;
+            
+            // إعادة تعيين حالة الإجابة
+            hasAnsweredThisRound = false;
+            colorWord.style.opacity = '1';
+
+            // التحقق مما إذا كان هناك من أجاب
+            if (roomData.answeredBy) {
+                // شخص ما أجاب بالفعل (أنا أو الخصم)
+                hasAnsweredThisRound = true;
+                
+                if (roomData.answeredBy === myId) {
+                    // أنا من أجاب
+                    showAnswerPopup(roomData.isCorrect ? '✅' : '❌');
+                } else {
+                    // الخصم هو من أجاب
+                    showAnswerPopup(roomData.isCorrect ? '❌' : '✅'); // إذا كان صحيحاً يعني خسرت، إذا كان خطأ يعني فزت (لن يتم إعطاء نقاط إن أخطأ)
+                }
+
+                // توليد الجولة التالية بعد تأخير
+                if (!roundTransitionTimeout) {
+                    roundTransitionTimeout = setTimeout(() => {
+                        roundTransitionTimeout = null;
+                        if (roomData.host === myId) {
+                            nextRound();
+                        }
+                    }, 2000);
+                }
+            }
+        }
+
+        // توليد كلمة جديدة (للمضيف فقط)
+        function generateNewWord() {
+            const textKey = colorKeys[Math.floor(Math.random() * colorKeys.length)]; // الكلمة المكتوبة
+            let colorKey = colorKeys[Math.floor(Math.random() * colorKeys.length)]; // اللون المستخدم
+            
+            // لضمان الصعوبة، نادراً ما يكون اللون مطابقاً للكلمة
+            if (Math.random() > 0.2) {
+                while(textKey === colorKey) {
+                    colorKey = colorKeys[Math.floor(Math.random() * colorKeys.length)];
+                }
+            }
+
+            db.ref(`rooms/${currentRoom}`).update({
+                wordData: {
+                    text: colorsData[textKey].name,
+                    colorHex: colorsData[colorKey].hex,
+                    correctAnswer: colorKey // الإجابة الصحيحة هي مفتاح اللون
+                },
+                answeredBy: null,
+                isCorrect: null
+            });
+        }
+
+        // الضغط على زر
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (roomData.status !== 'playing' || roomData.answeredBy || hasAnsweredThisRound) return;
+                
+                hasAnsweredThisRound = true;
+                const chosenColor = btn.getAttribute('data-color');
+                const isCorrect = (chosenColor === roomData.wordData.correctAnswer);
+
+                // إرسال الإجابة
+                db.ref(`rooms/${currentRoom}`).update({
+                    answeredBy: myId,
+                    isCorrect: isCorrect
+                }).then(() => {
+                    if (isCorrect) {
+                        // إضافة نقطة
+                        let score = roomData.players[myId].score || 0;
+                        db.ref(`rooms/${currentRoom}/players/${myId}/score`).set(score + 1);
+                        playSound('correct');
+                        if(navigator.vibrate) navigator.vibrate(50);
+                    } else {
+                        playSound('wrong');
+                        if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                    }
+                });
+            });
+        });
+
+        // المضيف ينتقل للجولة التالية
+        function nextRound() {
+            if (roomData.round >= TOTAL_ROUNDS) {
+                endGame();
+            } else {
+                db.ref(`rooms/${currentRoom}`).update({
+                    round: roomData.round + 1,
+                    wordData: null,
+                    answeredBy: null,
+                    isCorrect: null
+                });
+            }
+        }
+
+        // ==========================================
+        // 7. النهاية والنتائج
+        // ==========================================
+        function endGame() {
+            let p1 = roomData.host;
+            let p2 = Object.keys(roomData.players).find(id => id !== p1);
+            
+            let score1 = roomData.players[p1].score || 0;
+            let score2 = roomData.players[p2].score || 0;
+
+            let winnerId = null;
+            if (score1 > score2) winnerId = p1;
+            else if (score2 > score1) winnerId = p2;
+            else winnerId = "draw";
+
+            db.ref(`rooms/${currentRoom}`).update({
+                status: 'finished',
+                winner: winnerId
+            });
+            playSound('win');
+        }
+
+        function showResults() {
+            if (!winnerOverlay.classList.contains('show')) {
+                winnerOverlay.classList.add('show');
+                const isWinner = (roomData.winner === myId);
+                const isDraw = (roomData.winner === "draw");
+
+                const title = document.getElementById('winnerTitle');
+                if (isDraw) {
+                    title.textContent = "تعادل! 🤝";
+                    title.className = "winner-title draw-color";
+                } else if (isWinner) {
+                    title.textContent = "لقد فزت! 🏆";
+                    title.className = "winner-title win-color";
+                    if(navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+                } else {
+                    title.textContent = "لقد خسرت! 💀";
+                    title.className = "winner-title lose-color";
+                }
+
+                // عرض النتائج
+                let opName = "الخصم";
+                let opScore = 0;
+                let myScore = roomData.players[myId].score || 0;
+                
+                for(let pid in roomData.players) {
+                    if (pid !== myId) {
+                        opName = roomData.players[pid].name;
+                        opScore = roomData.players[pid].score || 0;
+                    }
+                }
+                document.getElementById('finalScoreText').textContent = `${opName}: ${opScore}  |  أنت: ${myScore}`;
+            }
+        }
+
+        document.getElementById('closeOverlayBtn').addEventListener('click', () => {
+            winnerOverlay.classList.remove('show');
+            if (roomData.host === myId) {
+                // إعادة اللعبة
+                db.ref('rooms/' + currentRoom).update({
+                    status: 'waiting',
+                    round: 1,
+                    wordData: null,
+                    answeredBy: null,
+                    winner: null
+                });
+                // تصفير النقاط
+                for(let pid in roomData.players) {
+                    db.ref(`rooms/${currentRoom}/players/${pid}/score`).set(0);
+                }
+            } else {
+                gameScreen.classList.remove('active');
+                lobbyScreen.classList.add('active');
+            }
+        });
+
+        // تأثير بصري
+        function showAnswerPopup(text) {
+            const el = document.createElement('div');
+            el.className = 'answer-popup';
+            el.textContent = text;
+            playArea.appendChild(el);
+            setTimeout(() => el.remove(), 800);
+        }
+
+    </script>
 </body>
 </html>
