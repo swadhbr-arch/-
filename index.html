@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>صدام الألوان | Color Clash</title>
+    <title>ساحة القتال النيون | Neon Arena</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -17,27 +17,30 @@
             --bg: #05050a; --panel: #12121a;
             --my-color: #00f3ff; --op-color: #ff0055; --gold: #ffcc00;
             --text-muted: #8892b0;
-            /* ألوان الأزرار */
-            --c-red: #ff0055;
-            --c-blue: #00aaff;
-            --c-green: #00ff66;
-            --c-yellow: #ffcc00;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
         
         html, body {
             height: 100%; width: 100%; overflow: hidden; background-color: var(--bg); color: #fff;
-            background-image: radial-gradient(circle at center, rgba(255,255,255,0.03) 0%, transparent 70%);
         }
 
         .app-container {
-            position: relative; width: 100%; max-width: 500px; height: 100dvh; 
+            position: relative; width: 100%; max-width: 550px; height: 100dvh; 
             margin: 0 auto; display: flex; flex-direction: column;
             background: var(--bg); box-shadow: 0 0 50px rgba(0,0,0,0.8);
         }
 
-        /* ===== شريط حقوق المطور ===== */
+        /* تأثير الاهتزاز عند تلقي ضربة */
+        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        /* شريط حقوق المطور */
         .dev-banner {
             background: linear-gradient(90deg, rgba(0,243,255,0.1), rgba(255,0,85,0.1));
             border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -47,7 +50,7 @@
         .dev-banner span { color: var(--my-color); font-size: 0.95rem; text-shadow: 0 0 10px rgba(0,243,255,0.5);}
 
         /* ===== الشاشات ===== */
-        .screen { display: none; flex-direction: column; flex: 1; height: 100%; overflow: hidden; }
+        .screen { display: none; flex-direction: column; flex: 1; height: 100%; overflow-y: auto; }
         .screen.active { display: flex; }
 
         /* ===== 1. شاشة الدخول ===== */
@@ -85,81 +88,85 @@
         .wait-text { color: var(--text-muted); font-size: 1rem; animation: pulse 1.5s infinite alternate;}
         @keyframes pulse { from { opacity: 0.5; } to { opacity: 1; } }
 
-        /* ===== 3. شاشة اللعب ===== */
-        #gameScreen { background: #000; }
+        /* ===== 3. شاشة القتال ===== */
+        #gameScreen { background: #000; padding: 15px; display: none; flex-direction: column;}
+        #gameScreen.active { display: flex; }
+
+        /* شريط الصحة */
+        .battle-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
         
-        .game-header {
-            padding: 15px; display: flex; justify-content: space-between; align-items: center;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent); z-index: 10;
-        }
-        .player-info { display: flex; flex-direction: column; align-items: center; }
-        .p-name { font-size: 0.8rem; font-weight: 700; color: #ccc; }
-        .p-score { font-size: 1.5rem; font-weight: 900; }
-        .my-score { color: var(--my-color); text-shadow: 0 0 10px var(--my-color); }
-        .op-score { color: var(--op-color); text-shadow: 0 0 10px var(--op-color); }
+        .hp-container { width: 100%; }
+        .hp-info { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; }
+        .hp-bar-bg { width: 100%; height: 15px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .hp-bar-fill { height: 100%; transition: width 0.3s ease, background 0.3s; }
         
-        .round-info { font-size: 0.9rem; color: #fff; background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 20px;}
+        .my-hp .hp-bar-fill { background: var(--my-color); box-shadow: 0 0 10px var(--my-color); }
+        .op-hp .hp-bar-fill { background: var(--op-color); box-shadow: 0 0 10px var(--op-color); }
 
-        /* منطقة اللعب */
-        .play-area {
-            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            padding: 20px; position: relative;
+        /* الساحة (المقاتلين) */
+        .arena {
+            flex: 1; display: flex; justify-content: space-around; align-items: center;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%);
+            position: relative;
         }
-
-        /* الكلمة المتوهجة */
-        .color-word {
-            font-size: 5rem; font-weight: 900; letter-spacing: 2px;
-            text-shadow: 0 0 30px currentColor, 0 0 60px currentColor;
-            transition: transform 0.1s;
-            animation: popWord 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes popWord { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-        /* شبكة الأزرار (4 أزرار) */
-        .buttons-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
-            width: 100%; max-width: 350px; margin-top: 50px;
-        }
-
-        .color-btn {
-            padding: 25px 10px; border-radius: 20px; border: none; font-size: 1.2rem; font-weight: 900;
-            cursor: pointer; transition: 0.2s; color: #000; box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-            text-shadow: 0 1px 2px rgba(255,255,255,0.3);
-        }
-
-        .color-btn:active { transform: scale(0.95); }
         
-        .btn-red { background: var(--c-red); color: #fff; text-shadow: none;}
-        .btn-blue { background: var(--c-blue); }
-        .btn-green { background: var(--c-green); }
-        .btn-yellow { background: var(--c-yellow); }
-
-        /* رسالة عائمة عند الإجابة */
-        .answer-popup {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 4rem; z-index: 20; pointer-events: none; animation: popUp 0.8s ease-out forwards;
+        .fighter {
+            font-size: 5rem; text-align: center; transition: transform 0.2s;
+            filter: drop-shadow(0 0 15px currentColor);
         }
-        @keyframes popUp {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
-            100% { transform: translate(-50%, -150%) scale(1.5); opacity: 0; }
+        .fighter.me { color: var(--my-color); }
+        .fighter.op { color: var(--op-color); transform: scaleX(-1); /* توجيه الخصم */ }
+
+        /* تأثير الهجوم */
+        .attack-anim-me { animation: dashRight 0.4s ease-out; }
+        .attack-anim-op { animation: dashLeft 0.4s ease-out; }
+        @keyframes dashRight { 0% { transform: translateX(0); } 50% { transform: translateX(50px) scale(1.2); } 100% { transform: translateX(0); } }
+        @keyframes dashLeft { 0% { transform: scaleX(-1) translateX(0); } 50% { transform: scaleX(-1) translateX(50px) scale(1.2); } 100% { transform: scaleX(-1) translateX(0); } }
+
+        /* سجل المعركة */
+        .battle-log {
+            height: 60px; background: rgba(255,255,255,0.05); border-radius: 10px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 0.9rem; font-weight: bold; text-align: center; padding: 0 10px;
+            color: var(--gold); margin-bottom: 20px; border: 1px solid rgba(255,204,0,0.2);
         }
 
-        /* شاشة النتيجة */
+        /* أزرار الحركات */
+        .actions-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+        }
+        
+        .action-btn {
+            background: var(--panel); border: 2px solid rgba(255,255,255,0.1); border-radius: 15px;
+            padding: 15px 5px; display: flex; flex-direction: column; align-items: center; gap: 5px;
+            cursor: pointer; transition: 0.2s; color: #fff;
+        }
+        .action-btn:hover { background: rgba(255,255,255,0.1); border-color: var(--my-color); }
+        .action-btn:active { transform: scale(0.95); }
+        .action-btn.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
+        
+        .action-icon { font-size: 2rem; }
+        .action-name { font-size: 0.8rem; font-weight: bold; }
+        
+        .btn-sword .action-icon { color: #ccc; }
+        .btn-magic .action-icon { color: #a855f7; }
+        .btn-heal .action-icon { color: #00ff66; }
+
+        /* شاشة الفائز */
         .winner-overlay {
-            position: absolute; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
+            position: absolute; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             z-index: 50; opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
         .winner-overlay.show { opacity: 1; pointer-events: auto; }
-        .winner-title { font-size: 2.5rem; font-weight: 900; margin-bottom: 10px; }
+        .winner-title { font-size: 3rem; font-weight: 900; margin-bottom: 10px; }
         .win-color { color: var(--my-color); text-shadow: 0 0 20px var(--my-color); }
         .lose-color { color: var(--op-color); text-shadow: 0 0 20px var(--op-color); }
-        .draw-color { color: var(--gold); text-shadow: 0 0 20px var(--gold); }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
+    <div class="app-container" id="appWrapper">
         
         <!-- شريط حقوق المطور -->
         <div class="dev-banner">
@@ -169,11 +176,11 @@
         <!-- 1. شاشة الدخول -->
         <div class="screen active" id="authScreen">
             <div class="login-card">
-                <div class="title">صدام الألوان 🎨</div>
-                <div class="subtitle">هل يستطيع عقلك تجاوز الخداع؟<br>اختر <b>لون</b> الكلمة، وليس معناها!</div>
+                <div class="title">ساحة القتال ⚔️</div>
+                <div class="subtitle">تحدى صديقك في معركة حتى الموت!</div>
                 
                 <div class="input-group">
-                    <label>اسمك:</label>
+                    <label>اسم المقاتل:</label>
                     <input type="text" id="playerName" placeholder="اكتب اسمك..." maxlength="15">
                 </div>
                 
@@ -185,49 +192,70 @@
                     <label>كود الغرفة (للدخول):</label>
                     <input type="text" id="roomCodeInput" placeholder="مثال: A7B2" style="text-transform: uppercase;" maxlength="6">
                 </div>
-                <button class="btn btn-outline" id="joinRoomBtn"><i class="fas fa-sign-in-alt"></i> دخول الغرفة</button>
+                <button class="btn btn-outline" id="joinRoomBtn"><i class="fas fa-sign-in-alt"></i> دخول المعركة</button>
             </div>
         </div>
 
         <!-- 2. شاشة الانتظار -->
         <div class="screen" id="lobbyScreen">
-            <h2 style="color: #fff; margin-bottom: 10px;">غرفة التحدي</h2>
+            <h2 style="color: #fff; margin-bottom: 10px;">غرفة المعركة</h2>
             <div class="room-code" id="displayRoomCode">----</div>
-            <p class="wait-text" id="waitMsg">بانتظار انضمام صديقك...</p>
+            <p class="wait-text" id="waitMsg">بانتظار انضمام الخصم...</p>
         </div>
 
-        <!-- 3. شاشة اللعب -->
+        <!-- 3. شاشة القتال -->
         <div class="screen" id="gameScreen">
             
-            <!-- الهيدر -->
-            <div class="game-header">
-                <div class="player-info">
-                    <span class="p-name" id="opNameDisplay">الخصم</span>
-                    <span class="p-score op-score" id="opScoreDisplay">0</span>
+            <!-- شريط الصحة -->
+            <div class="battle-header">
+                <div class="hp-container op-hp">
+                    <div class="hp-info">
+                        <span id="opNameDisplay">الخصم</span>
+                        <span id="opHpText">100 / 100</span>
+                    </div>
+                    <div class="hp-bar-bg"><div class="hp-bar-fill" id="opHpBar" style="width: 100%"></div></div>
                 </div>
-                <div class="round-info" id="roundDisplay">الجولة 1 / 10</div>
-                <div class="player-info">
-                    <span class="p-name" id="myNameDisplay">أنت</span>
-                    <span class="p-score my-score" id="myScoreDisplay">0</span>
+                
+                <div class="hp-container my-hp" style="margin-top: 10px;">
+                    <div class="hp-info">
+                        <span id="myNameDisplay">أنت</span>
+                        <span id="myHpText">100 / 100</span>
+                    </div>
+                    <div class="hp-bar-bg"><div class="hp-bar-fill" id="myHpBar" style="width: 100%"></div></div>
                 </div>
             </div>
 
             <!-- الساحة -->
-            <div class="play-area" id="playArea">
-                <div class="color-word" id="colorWord">استعد...</div>
-                
-                <div class="buttons-grid" id="buttonsGrid">
-                    <button class="color-btn btn-red" data-color="red">أحمر</button>
-                    <button class="color-btn btn-blue" data-color="blue">أزرق</button>
-                    <button class="color-btn btn-green" data-color="green">أخضر</button>
-                    <button class="color-btn btn-yellow" data-color="yellow">أصفر</button>
-                </div>
+            <div class="arena" id="arena">
+                <div class="fighter op" id="opFighter">😈</div>
+                <div style="font-size: 1.5rem; font-weight: 900; color: #555;">VS</div>
+                <div class="fighter me" id="myFighter">🤖</div>
             </div>
 
-            <!-- شاشة النتيجة -->
+            <!-- سجل المعركة -->
+            <div class="battle-log" id="battleLog">
+                المعركة ستبدأ...
+            </div>
+
+            <!-- أزرار الحركات -->
+            <div class="actions-grid" id="actionsGrid">
+                <button class="action-btn btn-sword" onclick="makeMove('sword')">
+                    <span class="action-icon"><i class="fas fa-khanda"></i></span>
+                    <span class="action-name">سيف (15-20)</span>
+                </button>
+                <button class="action-btn btn-magic" onclick="makeMove('magic')">
+                    <span class="action-icon"><i class="fas fa-meteor"></i></span>
+                    <span class="action-name">سحر (25-40)</span>
+                </button>
+                <button class="action-btn btn-heal" onclick="makeMove('heal')">
+                    <span class="action-icon"><i class="fas fa-medkit"></i></span>
+                    <span class="action-name">علاج (15-25)</span>
+                </button>
+            </div>
+
+            <!-- شاشة الفائز -->
             <div class="winner-overlay" id="winnerOverlay">
                 <div class="winner-title" id="winnerTitle">لقد فزت! 🏆</div>
-                <div style="font-size: 1.2rem; color: #aaa; margin-bottom: 30px;" id="finalScoreText"></div>
                 <button class="btn" id="closeOverlayBtn" style="width: 200px;">العودة للغرفة</button>
             </div>
 
@@ -252,36 +280,24 @@
         const db = firebase.database();
 
         // ==========================================
-        // 2. بيانات الألوان والكلمات
-        // ==========================================
-        const colorsData = {
-            red: { name: 'أحمر', hex: '#ff0055', class: 'btn-red' },
-            blue: { name: 'أزرق', hex: '#00aaff', class: 'btn-blue' },
-            green: { name: 'أخضر', hex: '#00ff66', class: 'btn-green' },
-            yellow: { name: 'أصفر', hex: '#ffcc00', class: 'btn-yellow' }
-        };
-        const colorKeys = Object.keys(colorsData);
-        
-        const TOTAL_ROUNDS = 10;
-
-        // ==========================================
-        // 3. المتغيرات
+        // 2. المتغيرات
         // ==========================================
         let myId = 'player_' + Math.floor(Math.random() * 10000);
         let myName = "";
         let currentRoom = "";
         let roomData = {};
-        let hasAnsweredThisRound = false;
-        let roundTransitionTimeout;
-
+        let myRole = ""; // 'p1' أو 'p2'
+        
         // العناصر
+        const appWrapper = document.getElementById('appWrapper');
         const authScreen = document.getElementById('authScreen');
         const lobbyScreen = document.getElementById('lobbyScreen');
         const gameScreen = document.getElementById('gameScreen');
         const winnerOverlay = document.getElementById('winnerOverlay');
-        const colorWord = document.getElementById('colorWord');
-        const playArea = document.getElementById('playArea');
-        const buttons = document.querySelectorAll('.color-btn');
+        const battleLog = document.getElementById('battleLog');
+        const actionsGrid = document.getElementById('actionsGrid');
+        const myFighter = document.getElementById('myFighter');
+        const opFighter = document.getElementById('opFighter');
 
         // الأصوات
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -292,16 +308,16 @@
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             
-            if(type === 'correct') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            } else if(type === 'wrong') {
+            if(type === 'hit') {
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.2);
                 gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            } else if(type === 'heal') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
             } else if(type === 'win') {
                 osc.type = 'square';
                 osc.frequency.setValueAtTime(400, audioCtx.currentTime);
@@ -310,13 +326,13 @@
                 gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
             }
 
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
             osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.4);
         }
 
         // ==========================================
-        // 4. إنشاء ودخول الغرف
+        // 3. إنشاء ودخول الغرف
         // ==========================================
         document.getElementById('createRoomBtn').addEventListener('click', () => {
             myName = document.getElementById('playerName').value.trim();
@@ -324,14 +340,16 @@
             
             const code = Math.random().toString(36).substring(2, 6).toUpperCase();
             currentRoom = code;
+            myRole = 'p1';
             
             db.ref('rooms/' + code).set({
                 host: myId,
                 status: 'waiting',
-                players: { [myId]: { name: myName, score: 0 } },
-                round: 1,
-                wordData: null,
-                answeredBy: null,
+                turn: 'p1', // p1 يبدأ
+                players: { 
+                    p1: { id: myId, name: myName, hp: 100 },
+                    p2: null 
+                },
                 winner: null
             }).then(() => enterLobby());
         });
@@ -343,10 +361,11 @@
             if (!code) return alert("الرجاء كتابة كود الغرفة");
 
             currentRoom = code;
+            myRole = 'p2';
             
             db.ref('rooms/' + code).once('value').then((snapshot) => {
                 if (snapshot.exists()) {
-                    db.ref(`rooms/${code}/players/${myId}`).set({ name: myName, score: 0 });
+                    db.ref(`rooms/${code}/players/p2`).set({ id: myId, name: myName, hp: 100 });
                     enterLobby();
                 } else {
                     alert("الغرفة غير موجودة.");
@@ -362,193 +381,148 @@
         }
 
         // ==========================================
-        // 5. الاستماع للغرفة
+        // 4. الاستماع للغرفة
         // ==========================================
         function listenToRoom() {
             db.ref('rooms/' + currentRoom).on('value', (snapshot) => {
                 roomData = snapshot.val();
                 if (!roomData) return;
 
-                let playerCount = Object.keys(roomData.players).length;
-
-                // بدء اللعب
-                if (roomData.status === 'waiting' && playerCount === 2) {
-                    db.ref(`rooms/${currentRoom}/status`).set('playing');
+                // بدء اللعب عند دخول شخصين
+                if (roomData.status === 'waiting' && roomData.players.p2) {
+                    db.ref(`rooms/${currentRoom}`).update({ status: 'playing' });
                 }
 
-                if (roomData.status === 'playing') {
+                if (roomData.status === 'playing' || roomData.status === 'finished') {
                     if (!gameScreen.classList.contains('active')) {
                         lobbyScreen.classList.remove('active');
                         gameScreen.classList.add('active');
                     }
                     updateGameUI();
-                    processRound();
-                }
-
-                if (roomData.status === 'finished') {
-                    showResults();
                 }
             });
         }
 
         // ==========================================
-        // 6. منطق اللعب
+        // 5. تحديث واجهة القتال
         // ==========================================
         function updateGameUI() {
-            // تحديث النقاط والأسماء
-            for (let pid in roomData.players) {
-                if (pid === myId) {
-                    document.getElementById('myNameDisplay').textContent = roomData.players[pid].name;
-                    document.getElementById('myScoreDisplay').textContent = roomData.players[pid].score || 0;
-                } else {
-                    document.getElementById('opNameDisplay').textContent = roomData.players[pid].name;
-                    document.getElementById('opScoreDisplay').textContent = roomData.players[pid].score || 0;
-                }
-            }
-            document.getElementById('roundDisplay').textContent = `الجولة ${roomData.round} / ${TOTAL_ROUNDS}`;
-        }
+            const me = roomData.players[myRole];
+            const op = roomData.players[myRole === 'p1' ? 'p2' : 'p1'];
 
-        function processRound() {
-            // إذا لم يتم توليد كلمة لهذه الجولة بعد
-            if (!roomData.wordData) {
-                if (roomData.host === myId) {
-                    generateNewWord();
-                }
-                return;
-            }
+            if (!me || !op) return;
 
-            // عرض الكلمة
-            const wd = roomData.wordData;
-            colorWord.textContent = wd.text;
-            colorWord.style.color = wd.colorHex;
+            // تحديث الأسماء
+            document.getElementById('myNameDisplay').textContent = me.name;
+            document.getElementById('opNameDisplay').textContent = op.name;
+
+            // تحديث شريط الصحة
+            document.getElementById('myHpText').textContent = `${me.hp} / 100`;
+            document.getElementById('opHpText').textContent = `${op.hp} / 100`;
             
-            // إعادة تعيين حالة الإجابة
-            hasAnsweredThisRound = false;
-            colorWord.style.opacity = '1';
+            document.getElementById('myHpBar').style.width = `${Math.max(0, me.hp)}%`;
+            document.getElementById('opHpBar').style.width = `${Math.max(0, op.hp)}%`;
 
-            // التحقق مما إذا كان هناك من أجاب
-            if (roomData.answeredBy) {
-                // شخص ما أجاب بالفعل (أنا أو الخصم)
-                hasAnsweredThisRound = true;
-                
-                if (roomData.answeredBy === myId) {
-                    // أنا من أجاب
-                    showAnswerPopup(roomData.isCorrect ? '✅' : '❌');
+            // تغيير اللون إذا كانت الصحة منخفضة
+            document.getElementById('myHpBar').style.background = me.hp < 30 ? 'var(--op-color)' : 'var(--my-color)';
+            document.getElementById('opHpBar').style.background = op.hp < 30 ? 'var(--my-color)' : 'var(--op-color)';
+
+            // التحقق من الدور
+            if (roomData.status === 'playing') {
+                if (roomData.turn === myRole) {
+                    battleLog.textContent = "دورك الآن! اختر حركتك ⚔️";
+                    actionsGrid.classList.remove('disabled');
+                    actionsGrid.style.pointerEvents = 'auto';
                 } else {
-                    // الخصم هو من أجاب
-                    showAnswerPopup(roomData.isCorrect ? '❌' : '✅'); // إذا كان صحيحاً يعني خسرت، إذا كان خطأ يعني فزت (لن يتم إعطاء نقاط إن أخطأ)
+                    battleLog.textContent = "انتظر دور الخصم... ⏳";
+                    actionsGrid.classList.add('disabled');
+                    actionsGrid.style.pointerEvents = 'none';
                 }
+            }
 
-                // توليد الجولة التالية بعد تأخير
-                if (!roundTransitionTimeout) {
-                    roundTransitionTimeout = setTimeout(() => {
-                        roundTransitionTimeout = null;
-                        if (roomData.host === myId) {
-                            nextRound();
-                        }
-                    }, 2000);
-                }
+            // التحقق من الفائز
+            if (roomData.winner) {
+                showResults(roomData.winner === myRole);
             }
         }
 
-        // توليد كلمة جديدة (للمضيف فقط)
-        function generateNewWord() {
-            const textKey = colorKeys[Math.floor(Math.random() * colorKeys.length)]; // الكلمة المكتوبة
-            let colorKey = colorKeys[Math.floor(Math.random() * colorKeys.length)]; // اللون المستخدم
+        // ==========================================
+        // 6. تنفيذ الحركات
+        // ==========================================
+        function makeMove(type) {
+            if (roomData.turn !== myRole || roomData.status !== 'playing') return;
+
+            const me = roomData.players[myRole];
+            const opRole = myRole === 'p1' ? 'p2' : 'p1';
+            const op = roomData.players[opRole];
+
+            let damage = 0;
+            let heal = 0;
+            let logMsg = "";
+
+            if (type === 'sword') {
+                damage = Math.floor(Math.random() * 6) + 15; // 15-20
+                logMsg = `${me.name} سدد ضربة سيف! ⚔️ (-${damage} صحة)`;
+            } else if (type === 'magic') {
+                if (Math.random() < 0.2) {
+                    logMsg = `${me.name} أطلق كرة سحرية... لكنها أخطأت! 💨`;
+                } else {
+                    damage = Math.floor(Math.random() * 16) + 25; // 25-40
+                    logMsg = `${me.name} أطلق كرة سحرية قوية! 🔮 (-${damage} صحة)`;
+                }
+            } else if (type === 'heal') {
+                heal = Math.floor(Math.random() * 11) + 15; // 15-25
+                logMsg = `${me.name} استخدم العلاج! 💊 (+${heal} صحة)`;
+            }
+
+            // تأثيرات بصرية
+            if (damage > 0) {
+                playSound('hit');
+                if (myRole === 'p1') {
+                    myFighter.classList.add('attack-anim-me');
+                    setTimeout(() => myFighter.classList.remove('attack-anim-me'), 400);
+                } else {
+                    myFighter.classList.add('attack-anim-op');
+                    setTimeout(() => myFighter.classList.remove('attack-anim-op'), 400);
+                }
+                appWrapper.classList.add('shake');
+                setTimeout(() => appWrapper.classList.remove('shake'), 400);
+            } else if (heal > 0) {
+                playSound('heal');
+            }
+
+            battleLog.textContent = logMsg;
+
+            // تحديث الصحة في قاعدة البيانات
+            let newMyHp = Math.min(100, me.hp + heal);
+            let newOpHp = Math.max(0, op.hp - damage);
+
+            const updates = {};
+            updates[`rooms/${currentRoom}/players/${myRole}/hp`] = newMyHp;
+            updates[`rooms/${currentRoom}/players/${opRole}/hp`] = newOpHp;
             
-            // لضمان الصعوبة، نادراً ما يكون اللون مطابقاً للكلمة
-            if (Math.random() > 0.2) {
-                while(textKey === colorKey) {
-                    colorKey = colorKeys[Math.floor(Math.random() * colorKeys.length)];
-                }
+            // تغيير الدور
+            updates[`rooms/${currentRoom}/turn`] = opRole;
+
+            // التحقق من الفوز
+            if (newOpHp <= 0) {
+                updates[`rooms/${currentRoom}/status`] = 'finished';
+                updates[`rooms/${currentRoom}/winner`] = myRole;
+                playSound('win');
             }
 
-            db.ref(`rooms/${currentRoom}`).update({
-                wordData: {
-                    text: colorsData[textKey].name,
-                    colorHex: colorsData[colorKey].hex,
-                    correctAnswer: colorKey // الإجابة الصحيحة هي مفتاح اللون
-                },
-                answeredBy: null,
-                isCorrect: null
-            });
-        }
-
-        // الضغط على زر
-        buttons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (roomData.status !== 'playing' || roomData.answeredBy || hasAnsweredThisRound) return;
-                
-                hasAnsweredThisRound = true;
-                const chosenColor = btn.getAttribute('data-color');
-                const isCorrect = (chosenColor === roomData.wordData.correctAnswer);
-
-                // إرسال الإجابة
-                db.ref(`rooms/${currentRoom}`).update({
-                    answeredBy: myId,
-                    isCorrect: isCorrect
-                }).then(() => {
-                    if (isCorrect) {
-                        // إضافة نقطة
-                        let score = roomData.players[myId].score || 0;
-                        db.ref(`rooms/${currentRoom}/players/${myId}/score`).set(score + 1);
-                        playSound('correct');
-                        if(navigator.vibrate) navigator.vibrate(50);
-                    } else {
-                        playSound('wrong');
-                        if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
-                    }
-                });
-            });
-        });
-
-        // المضيف ينتقل للجولة التالية
-        function nextRound() {
-            if (roomData.round >= TOTAL_ROUNDS) {
-                endGame();
-            } else {
-                db.ref(`rooms/${currentRoom}`).update({
-                    round: roomData.round + 1,
-                    wordData: null,
-                    answeredBy: null,
-                    isCorrect: null
-                });
-            }
+            db.ref().update(updates);
         }
 
         // ==========================================
         // 7. النهاية والنتائج
         // ==========================================
-        function endGame() {
-            let p1 = roomData.host;
-            let p2 = Object.keys(roomData.players).find(id => id !== p1);
-            
-            let score1 = roomData.players[p1].score || 0;
-            let score2 = roomData.players[p2].score || 0;
-
-            let winnerId = null;
-            if (score1 > score2) winnerId = p1;
-            else if (score2 > score1) winnerId = p2;
-            else winnerId = "draw";
-
-            db.ref(`rooms/${currentRoom}`).update({
-                status: 'finished',
-                winner: winnerId
-            });
-            playSound('win');
-        }
-
-        function showResults() {
+        function showResults(isWinner) {
             if (!winnerOverlay.classList.contains('show')) {
                 winnerOverlay.classList.add('show');
-                const isWinner = (roomData.winner === myId);
-                const isDraw = (roomData.winner === "draw");
-
                 const title = document.getElementById('winnerTitle');
-                if (isDraw) {
-                    title.textContent = "تعادل! 🤝";
-                    title.className = "winner-title draw-color";
-                } else if (isWinner) {
+                
+                if (isWinner) {
                     title.textContent = "لقد فزت! 🏆";
                     title.className = "winner-title win-color";
                     if(navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
@@ -556,51 +530,26 @@
                     title.textContent = "لقد خسرت! 💀";
                     title.className = "winner-title lose-color";
                 }
-
-                // عرض النتائج
-                let opName = "الخصم";
-                let opScore = 0;
-                let myScore = roomData.players[myId].score || 0;
-                
-                for(let pid in roomData.players) {
-                    if (pid !== myId) {
-                        opName = roomData.players[pid].name;
-                        opScore = roomData.players[pid].score || 0;
-                    }
-                }
-                document.getElementById('finalScoreText').textContent = `${opName}: ${opScore}  |  أنت: ${myScore}`;
             }
         }
 
         document.getElementById('closeOverlayBtn').addEventListener('click', () => {
             winnerOverlay.classList.remove('show');
+            
+            // إعادة تعيين اللعبة
             if (roomData.host === myId) {
-                // إعادة اللعبة
                 db.ref('rooms/' + currentRoom).update({
                     status: 'waiting',
-                    round: 1,
-                    wordData: null,
-                    answeredBy: null,
-                    winner: null
+                    turn: 'p1',
+                    winner: null,
+                    'players/p1/hp': 100,
+                    'players/p2/hp': 100
                 });
-                // تصفير النقاط
-                for(let pid in roomData.players) {
-                    db.ref(`rooms/${currentRoom}/players/${pid}/score`).set(0);
-                }
             } else {
                 gameScreen.classList.remove('active');
                 lobbyScreen.classList.add('active');
             }
         });
-
-        // تأثير بصري
-        function showAnswerPopup(text) {
-            const el = document.createElement('div');
-            el.className = 'answer-popup';
-            el.textContent = text;
-            playArea.appendChild(el);
-            setTimeout(() => el.remove(), 800);
-        }
 
     </script>
 </body>
