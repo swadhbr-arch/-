@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>مبارزة الساموراي | Samurai Duel</title>
+    <title>تحدي إكس أو | Ultimate XO</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -26,17 +26,8 @@
             background-image: radial-gradient(circle at center, rgba(0,243,255,0.05) 0%, transparent 70%);
         }
 
-        /* تأثير الاهتزاز */
-        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-2px, 0, 0); }
-            20%, 80% { transform: translate3d(4px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
-            40%, 60% { transform: translate3d(6px, 0, 0); }
-        }
-
         .app-container {
-            position: relative; width: 100%; max-width: 550px; height: 100dvh; 
+            position: relative; width: 100%; max-width: 500px; height: 100dvh; 
             margin: 0 auto; display: flex; flex-direction: column;
             background: var(--bg); box-shadow: 0 0 50px rgba(0,0,0,0.8);
         }
@@ -51,7 +42,7 @@
         .dev-banner span { color: var(--my-color); font-size: 0.85rem; text-shadow: 0 0 10px rgba(0,243,255,0.5);}
 
         /* ===== الشاشات ===== */
-        .screen { display: none; flex-direction: column; flex: 1; height: 100%; overflow-y: auto; position: relative;}
+        .screen { display: none; flex-direction: column; flex: 1; height: 100%; overflow-y: auto; }
         .screen.active { display: flex; }
 
         /* ===== 1. شاشة الدخول ===== */
@@ -76,7 +67,7 @@
             border: none; border-radius: 10px; cursor: pointer; transition: 0.2s; width: 100%;
             display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .btn:hover { background: #fff; }
+        .btn:hover { background: #fff; box-shadow: 0 0 15px var(--my-color); }
         .btn-outline { background: transparent; color: var(--op-color); border: 2px solid var(--op-color); margin-top: 10px;}
 
         /* ===== 2. شاشة الانتظار ===== */
@@ -91,81 +82,55 @@
 
         /* --- قسم اللعبة (العلوي) --- */
         .game-section {
-            flex: 1.2; display: flex; flex-direction: column; background: var(--panel);
-            border-radius: 15px; padding: 10px; margin-bottom: 10px; position: relative; overflow: hidden;
+            flex: 1; display: flex; flex-direction: column; background: var(--panel);
+            border-radius: 15px; padding: 10px; margin-bottom: 10px; position: relative;
         }
 
-        /* أشرطة الصحة */
-        .hp-box { width: 100%; margin-bottom: 10px; z-index: 2;}
-        .hp-header { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: bold; margin-bottom: 3px; }
-        .hp-bar-bg { width: 100%; height: 12px; background: rgba(0,0,0,0.6); border-radius: 10px; overflow: hidden; }
-        .hp-bar-fill { height: 100%; transition: width 0.3s ease, background 0.3s; }
+        /* الهيدر (الأسماء والدور) */
+        .game-header {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 10px; margin-bottom: 15px;
+        }
+        .p-info { display: flex; flex-direction: column; align-items: center; }
+        .p-name { font-size: 0.8rem; font-weight: 700; color: #ccc; }
+        .p-symbol { font-size: 1.2rem; font-weight: 900; }
+        .p1-color { color: var(--my-color); text-shadow: 0 0 10px var(--my-color); }
+        .p2-color { color: var(--op-color); text-shadow: 0 0 10px var(--op-color); }
         
-        .my-hp .hp-bar-fill { background: var(--my-color); box-shadow: 0 0 10px var(--my-color); float: right;}
-        .op-hp .hp-bar-fill { background: var(--op-color); box-shadow: 0 0 10px var(--op-color); float: left;}
+        .turn-indicator { font-size: 0.85rem; font-weight: 900; color: var(--gold); background: rgba(255,204,0,0.1); padding: 4px 10px; border-radius: 15px;}
 
-        .p1-color { color: var(--my-color); text-shadow: 0 0 5px var(--my-color);}
-        .p2-color { color: var(--op-color); text-shadow: 0 0 5px var(--op-color);}
-
-        /* الساحة (المقاتلين) */
-        .arena {
-            flex: 1; display: flex; justify-content: space-between; align-items: center;
-            padding: 0 20px; position: relative;
+        /* لوحة إكس أو */
+        .board-container {
+            flex: 1; display: flex; justify-content: center; align-items: center; width: 100%;
         }
-
-        /* خط الأرضية */
-        .arena::after {
-            content: ''; position: absolute; bottom: 20%; left: 5%; right: 5%; height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        .board {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+            width: 100%; max-width: 320px; aspect-ratio: 1 / 1; /* يضمن بقاء اللوحة مربعة */
+            background: rgba(0,0,0,0.4); padding: 8px; border-radius: 15px;
         }
-
-        .fighter {
-            font-size: 4rem; position: relative; z-index: 2;
-            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));
-            transition: transform 0.1s;
+        .cell {
+            background: #0f172a; border-radius: 10px; display: flex; justify-content: center; align-items: center;
+            font-size: clamp(2rem, 10vw, 3rem); font-weight: 900; cursor: pointer; transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.05);
         }
-        .fighter.me { color: var(--my-color); transform: scaleX(-1); } /* توجيه المقاتل لليمين */
-        .fighter.op { color: var(--op-color); }
+        .cell:hover { background: #1e2536; }
+        .cell.x { color: var(--my-color); text-shadow: 0 0 10px var(--my-color); }
+        .cell.o { color: var(--op-color); text-shadow: 0 0 10px var(--op-color); }
+        .cell.win { background: rgba(0,255,102,0.2); border: 2px solid var(--success); animation: pulseWin 0.5s infinite alternate; }
+        @keyframes pulseWin { from { transform: scale(1); } to { transform: scale(1.05); } }
 
-        /* حركات القتال */
-        .attack-me { animation: dashRight 0.3s ease-out; }
-        .attack-op { animation: dashLeft 0.3s ease-out; }
-        @keyframes dashRight { 0% { transform: scaleX(-1) translateX(0); } 50% { transform: scaleX(-1) translateX(50px) scale(1.2); } 100% { transform: scaleX(-1) translateX(0); } }
-        @keyframes dashLeft { 0% { transform: translateX(0); } 50% { transform: translateX(50px) scale(1.2); } 100% { transform: translateX(0); } }
-
-        /* سجل المعركة */
-        .battle-log { 
-            background: rgba(0,0,0,0.7); padding: 8px; border-radius: 8px; text-align: center; 
-            font-weight: bold; color: var(--gold); font-size: 0.85rem; margin-top: auto;
-            border: 1px solid rgba(255,204,0,0.2); z-index: 2; min-height: 40px;
-        }
-
-        /* أزرار الحركات */
-        .actions-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; z-index: 2;
-        }
-        .action-btn {
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px; padding: 10px 5px; display: flex; flex-direction: column; 
-            align-items: center; gap: 4px; cursor: pointer; color: #fff; font-weight: bold;
-        }
-        .action-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.1); }
-        .action-btn:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
-        .action-btn i { font-size: 1.3rem; }
-        .action-btn span { font-size: 0.75rem; }
-        
-        .btn-sword i { color: #ccc; }
-        .btn-kick i { color: #ffcc00; }
-        .btn-heal i { color: #00ff66; }
+        /* أزرار التحكم */
+        .controls { display: flex; gap: 10px; margin-top: 15px; }
+        .controls .btn { padding: 10px; font-size: 0.85rem; border-radius: 10px;}
 
         /* --- قسم الدردشة (السفلي) --- */
         .chat-section {
-            flex: 0.8; display: flex; flex-direction: column;
+            flex: 0.6; display: flex; flex-direction: column;
             background: var(--panel); border-radius: 15px; overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05); min-height: 0; /* هام جداً لمنع تمدد الشاشة */
+            border: 1px solid rgba(255,255,255,0.05); min-height: 0; /* يمنع تمدد الشاشة */
         }
-        .chat-messages { flex: 1; padding: 8px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
-        .msg { padding: 6px 12px; border-radius: 12px; font-size: 0.8rem; max-width: 85%; word-break: break-word; }
+        .chat-messages { flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+        .msg { padding: 6px 12px; border-radius: 10px; font-size: 0.8rem; max-width: 85%; word-break: break-word; }
         .msg.me { background: var(--my-color); color: #000; align-self: flex-end; border-bottom-right-radius: 2px;}
         .msg.other { background: #334155; color: #fff; align-self: flex-start; border-bottom-left-radius: 2px;}
         
@@ -175,7 +140,7 @@
 
         /* شاشة الفائز */
         .winner-overlay {
-            position: absolute; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
+            position: absolute; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             z-index: 50; opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
@@ -183,11 +148,12 @@
         .winner-title { font-size: 2.5rem; font-weight: 900; margin-bottom: 20px; }
         .win-color { color: var(--my-color); text-shadow: 0 0 20px var(--my-color); }
         .lose-color { color: var(--op-color); text-shadow: 0 0 20px var(--op-color); }
+        .draw-color { color: var(--gold); text-shadow: 0 0 20px var(--gold); }
     </style>
 </head>
 <body>
 
-    <div class="app-container" id="appWrapper">
+    <div class="app-container">
         
         <div class="dev-banner">
             تطوير المبدع: <span>عبدالرحيم الجياشي الشمري</span>
@@ -196,11 +162,11 @@
         <!-- 1. شاشة الدخول -->
         <div class="screen active" id="authScreen">
             <div class="login-card">
-                <div class="title">مبارزة الساموراي ⚔️</div>
-                <div class="subtitle">لعبة قتال سريعة وسلسة تعمل على جميع الأجهزة</div>
+                <div class="title">تحدي إكس أو ❌⭕</div>
+                <div class="subtitle">لعبة الذكاء الكلاسيكية.. من سيفوز؟</div>
                 
                 <div class="input-group">
-                    <label>اسم المقاتل:</label>
+                    <label>اسمك:</label>
                     <input type="text" id="playerName" placeholder="اكتب اسمك..." maxlength="15">
                 </div>
                 
@@ -212,66 +178,55 @@
                     <label>كود الغرفة (للدخول):</label>
                     <input type="text" id="roomCodeInput" placeholder="مثال: A7B2" style="text-transform: uppercase;" maxlength="6">
                 </div>
-                <button class="btn btn-outline" id="joinRoomBtn"><i class="fas fa-sign-in-alt"></i> دخول المعركة</button>
+                <button class="btn btn-outline" id="joinRoomBtn"><i class="fas fa-sign-in-alt"></i> دخول الغرفة</button>
             </div>
         </div>
 
         <!-- 2. شاشة الانتظار -->
         <div class="screen" id="lobbyScreen">
-            <h2 style="color: #fff; margin-bottom: 10px;">غرفة المعركة</h2>
+            <h2 style="color: #fff; margin-bottom: 10px;">غرفة الانتظار</h2>
             <div class="room-code" id="displayRoomCode">----</div>
-            <p class="wait-text" id="waitMsg">بانتظار انضمام الخصم...</p>
+            <p class="wait-text" id="waitMsg">بانتظار انضمام صديقك...</p>
         </div>
 
         <!-- 3. شاشة اللعب -->
         <div class="screen" id="gameScreen">
             
-            <!-- قسم اللعبة (العلوي) -->
+            <!-- قسم اللعبة -->
             <div class="game-section">
-                
-                <!-- أشرطة الصحة -->
-                <div class="hp-box op-hp">
-                    <div class="hp-header">
-                        <span class="p2-color" id="opName">الخصم</span>
-                        <span id="opHpText">100 / 100</span>
+                <div class="game-header">
+                    <div class="p-info">
+                        <span class="p-name" id="opName">الخصم</span>
+                        <span class="p-symbol p2-color" id="opSymbol">O</span>
                     </div>
-                    <div class="hp-bar-bg"><div class="hp-bar-fill" id="opHpBar" style="width: 100%"></div></div>
-                </div>
-
-                <!-- الساحة -->
-                <div class="arena">
-                    <div class="fighter op" id="opFighter">👹</div>
-                    <div style="font-size: 1.2rem; font-weight: 900; color: #555; z-index:2;">VS</div>
-                    <div class="fighter me" id="myFighter">🥷</div>
-                </div>
-
-                <!-- شريط صحتي -->
-                <div class="hp-box my-hp">
-                    <div class="hp-header">
-                        <span class="p1-color" id="myName">أنت</span>
-                        <span id="myHpText">100 / 100</span>
+                    <div class="turn-indicator" id="turnDisplay">جاري التحميل...</div>
+                    <div class="p-info">
+                        <span class="p-name" id="myName">أنت</span>
+                        <span class="p-symbol p1-color" id="mySymbol">X</span>
                     </div>
-                    <div class="hp-bar-bg"><div class="hp-bar-fill" id="myHpBar" style="width: 100%"></div></div>
                 </div>
 
-                <!-- سجل المعركة -->
-                <div class="battle-log" id="battleLog">استعد للمعركة...</div>
+                <div class="board-container">
+                    <div class="board" id="board">
+                        <div class="cell" data-index="0"></div>
+                        <div class="cell" data-index="1"></div>
+                        <div class="cell" data-index="2"></div>
+                        <div class="cell" data-index="3"></div>
+                        <div class="cell" data-index="4"></div>
+                        <div class="cell" data-index="5"></div>
+                        <div class="cell" data-index="6"></div>
+                        <div class="cell" data-index="7"></div>
+                        <div class="cell" data-index="8"></div>
+                    </div>
+                </div>
 
-                <!-- أزرار الحركات -->
-                <div class="actions-grid">
-                    <button class="action-btn btn-sword" onclick="performAction('sword')">
-                        <i class="fas fa-khanda"></i> <span>سيف (10-20)</span>
-                    </button>
-                    <button class="action-btn btn-kick" onclick="performAction('kick')">
-                        <i class="fas fa-shoe-prints"></i> <span>ركلة (15-25)</span>
-                    </button>
-                    <button class="action-btn btn-heal" onclick="performAction('heal')">
-                        <i class="fas fa-medkit"></i> <span>علاج (15-20)</span>
-                    </button>
+                <div class="controls">
+                    <button class="btn" id="nextRoundBtn" style="display: none; background: var(--gold);"><i class="fas fa-redo"></i> جولة جديدة</button>
+                    <button class="btn" id="restartBtn" style="background: transparent; border: 1px solid #555; color: #aaa;"><i class="fas fa-door-open"></i> خروج</button>
                 </div>
             </div>
 
-            <!-- قسم الدردشة (السفلي) -->
+            <!-- قسم الدردشة -->
             <div class="chat-section">
                 <div class="chat-messages" id="chatMessages"></div>
                 <div class="chat-input">
@@ -283,7 +238,7 @@
             <!-- شاشة الفائز -->
             <div class="winner-overlay" id="winnerOverlay">
                 <div class="winner-title" id="winnerTitle">لقد فزت! 🏆</div>
-                <button class="btn" id="closeOverlayBtn" style="width: 200px;">العودة للغرفة</button>
+                <button class="btn" id="closeOverlayBtn" style="width: 200px;">استمرار</button>
             </div>
 
         </div>
@@ -313,53 +268,15 @@
         let myName = "";
         let currentRoom = "";
         let roomData = {};
-        let myRole = ""; // 'p1' أو 'p2'
-        
-        let lastLogProcessed = "";
+        let myRole = ""; // 'p1' (X) أو 'p2' (O)
         let lastMessageCount = 0;
 
         // العناصر
-        const appWrapper = document.getElementById('appWrapper');
         const authScreen = document.getElementById('authScreen');
         const lobbyScreen = document.getElementById('lobbyScreen');
         const gameScreen = document.getElementById('gameScreen');
         const winnerOverlay = document.getElementById('winnerOverlay');
-        const battleLog = document.getElementById('battleLog');
         const chatMessages = document.getElementById('chatMessages');
-        const myFighter = document.getElementById('myFighter');
-        const opFighter = document.getElementById('opFighter');
-
-        // الأصوات
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const audioCtx = new AudioContext();
-        
-        function playSound(type) {
-            if(audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            
-            if(type === 'hit') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.2);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            } else if(type === 'heal') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-                osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.3);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            } else if(type === 'win') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-                osc.frequency.setValueAtTime(600, audioCtx.currentTime + 0.1);
-                osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.2);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            }
-
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-        }
 
         // ==========================================
         // 3. إنشاء ودخول الغرف
@@ -372,16 +289,12 @@
             currentRoom = code;
             myRole = 'p1';
             
-            db.ref('samurai/' + code).set({
+            db.ref('ultimate_xo/' + code).set({
                 host: myId,
                 status: 'waiting',
-                p1_hp: 100, p2_hp: 100,
+                players: { p1: { name: myName }, p2: null },
+                board: ["", "", "", "", "", "", "", "", ""],
                 turn: 'p1',
-                players: { 
-                    p1: { name: myName },
-                    p2: null 
-                },
-                lastLog: "استعد للمعركة! ⚔️",
                 winner: null
             }).then(() => enterLobby());
         });
@@ -395,9 +308,9 @@
             currentRoom = code;
             myRole = 'p2';
             
-            db.ref('samurai/' + code).once('value').then((snapshot) => {
+            db.ref('ultimate_xo/' + code).once('value').then((snapshot) => {
                 if (snapshot.exists()) {
-                    db.ref(`samurai/${code}/players/p2`).set({ name: myName });
+                    db.ref(`ultimate_xo/${code}/players/p2`).set({ name: myName });
                     enterLobby();
                 } else {
                     alert("الغرفة غير موجودة.");
@@ -416,12 +329,12 @@
         // 4. الاستماع للغرفة
         // ==========================================
         function listenToRoom() {
-            db.ref('samurai/' + currentRoom).on('value', (snapshot) => {
+            db.ref('ultimate_xo/' + currentRoom).on('value', (snapshot) => {
                 roomData = snapshot.val();
                 if (!roomData) return;
 
                 if (roomData.status === 'waiting' && roomData.players.p2) {
-                    db.ref(`samurai/${currentRoom}`).update({ status: 'playing' });
+                    db.ref(`ultimate_xo/${currentRoom}`).update({ status: 'playing' });
                 }
 
                 if (roomData.status === 'playing' || roomData.status === 'finished') {
@@ -447,123 +360,178 @@
 
             document.getElementById('myName').textContent = me.name;
             document.getElementById('opName').textContent = op.name;
-
-            let myHp = Math.max(0, roomData[`${myRole}_hp`]);
-            let opHp = Math.max(0, roomData[`${opRole}_hp`]);
-
-            document.getElementById('myHpText').textContent = `${myHp} / 100`;
-            document.getElementById('opHpText').textContent = `${opHp} / 100`;
             
-            document.getElementById('myHpBar').style.width = `${myHp}%`;
-            document.getElementById('opHpBar').style.width = `${opHp}%`;
-
-            // تغيير اللون للتحذير
-            if (myHp <= 30) document.getElementById('myHpBar').style.background = 'var(--op-color)';
-            else document.getElementById('myHpBar').style.background = 'var(--my-color)';
+            const mySymbol = myRole === 'p1' ? 'X' : 'O';
+            const opSymbol = myRole === 'p1' ? 'O' : 'X';
             
-            if (opHp <= 30) document.getElementById('opHpBar').style.background = 'var(--my-color)';
-            else document.getElementById('opHpBar').style.background = 'var(--op-color)';
+            document.getElementById('mySymbol').textContent = mySymbol;
+            document.getElementById('opSymbol').textContent = opSymbol;
 
-            battleLog.textContent = roomData.lastLog || "المعركة مستمرة...";
+            document.getElementById('mySymbol').className = `p-symbol ${mySymbol === 'X' ? 'p1-color' : 'p2-color'}`;
+            document.getElementById('opSymbol').className = `p-symbol ${opSymbol === 'X' ? 'p1-color' : 'p2-color'}`;
 
-            // تأثيرات بصرية
-            if (roomData.lastLog !== lastLogProcessed) {
-                lastLogProcessed = roomData.lastLog;
-                
-                if (roomData.lastLog.includes('سدد') || roomData.lastLog.includes('ركل')) {
-                    appWrapper.classList.add('shake');
-                    setTimeout(() => appWrapper.classList.remove('shake'), 400);
-                    playSound('hit');
-                    
-                    // حركة المقاتل
-                    if (roomData.lastLog.includes(me.name)) {
-                        myFighter.classList.add('attack-me');
-                        setTimeout(() => myFighter.classList.remove('attack-me'), 300);
-                    } else {
-                        opFighter.classList.add('attack-op');
-                        setTimeout(() => opFighter.classList.remove('attack-op'), 300);
-                    }
-                } else if (roomData.lastLog.includes('العلاج')) {
-                    playSound('heal');
-                }
-            }
+            // تحديث اللوحة
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach((cell, index) => {
+                const val = roomData.board[index];
+                cell.textContent = val;
+                cell.className = 'cell'; // تصفير
+                if (val === 'X') cell.classList.add('x');
+                if (val === 'O') cell.classList.add('o');
+            });
 
-            // التحكم بالأزرار
-            const isMyTurn = (roomData.turn === myRole);
-            const btns = document.querySelectorAll('.action-btn');
-
+            // مؤشر الدور
+            const turnDisplay = document.getElementById('turnDisplay');
             if (roomData.winner) {
-                btns.forEach(b => b.disabled = true);
-                if (!winnerOverlay.classList.contains('show')) {
-                    winnerOverlay.classList.add('show');
-                    const isWinner = (roomData.winner === myRole);
-                    document.getElementById('winnerTitle').textContent = isWinner ? "لقد فزت! 🏆" : "لقد خسرت! 💀";
-                    document.getElementById('winnerTitle').className = `winner-title ${isWinner ? 'win-color' : 'lose-color'}`;
-                    if (isWinner) playSound('win');
-                }
+                turnDisplay.textContent = "انتهت اللعبة";
             } else {
-                btns.forEach(b => b.disabled = !isMyTurn);
+                if (roomData.turn === myRole) {
+                    turnDisplay.textContent = "دورك الآن!";
+                    turnDisplay.style.color = "var(--gold)";
+                } else {
+                    turnDisplay.textContent = "دور الخصم...";
+                    turnDisplay.style.color = "var(--text-muted)";
+                }
+            }
+
+            // التحقق من الفائز
+            if (roomData.winner && !winnerOverlay.classList.contains('show')) {
+                showResults();
+                highlightWinningLine();
             }
         }
 
         // ==========================================
-        // 6. تنفيذ الحركات
+        // 6. منطق إسقاط القطع
         // ==========================================
-        function performAction(action) {
-            if (roomData.turn !== myRole || roomData.winner) return;
+        document.querySelectorAll('.cell').forEach(cell => {
+            cell.addEventListener('click', () => {
+                const index = cell.getAttribute('data-index');
+                if (roomData.winner || roomData.turn !== myRole || roomData.board[index] !== "") return;
 
-            const opRole = myRole === 'p1' ? 'p2' : 'p1';
-            let myHp = roomData[`${myRole}_hp`];
-            let opHp = roomData[`${opRole}_hp`];
-            let logMsg = "";
-            let updates = {};
+                const mySymbol = myRole === 'p1' ? 'X' : 'O';
+                const updates = {};
+                updates[`ultimate_xo/${currentRoom}/board/${index}`] = mySymbol;
+                updates[`ultimate_xo/${currentRoom}/turn`] = myRole === 'p1' ? 'p2' : 'p1';
+                
+                db.ref().update(updates);
+            });
+        });
 
-            if (action === 'sword') {
-                let dmg = Math.floor(Math.random() * 11) + 10; // 10-20
-                opHp = Math.max(0, opHp - dmg);
-                updates[`${opRole}_hp`] = opHp;
-                logMsg = `${roomData.players[myRole].name} سدد ضربة سيف! ⚔️ (-${dmg})`;
-            } else if (action === 'kick') {
-                let dmg = Math.floor(Math.random() * 11) + 15; // 15-25
-                opHp = Math.max(0, opHp - dmg);
-                updates[`${opRole}_hp`] = opHp;
-                logMsg = `${roomData.players[myRole].name} ركل خصمه بقوة! 🦵 (-${dmg})`;
-            } else if (action === 'heal') {
-                let heal = Math.floor(Math.random() * 6) + 15; // 15-20
-                myHp = Math.min(100, myHp + heal);
-                updates[`${myRole}_hp`] = myHp;
-                logMsg = `${roomData.players[myRole].name} استخدم العلاج! 💊 (+${heal})`;
+        // ==========================================
+        // 7. التحقق من الفوز
+        // ==========================================
+        function checkGameState() {
+            const b = roomData.board;
+            const winPatterns = [
+                [0,1,2], [3,4,5], [6,7,8],
+                [0,3,6], [1,4,7], [2,5,8],
+                [0,4,8], [2,4,6]
+            ];
+
+            let winnerSymbol = null;
+            let winPattern = null;
+
+            for (let pattern of winPatterns) {
+                const [a, b1, c] = pattern;
+                if (b[a] && b[a] === b[b1] && b[a] === b[c]) {
+                    winnerSymbol = b[a];
+                    winPattern = pattern;
+                    break;
+                }
             }
 
-            updates['turn'] = opRole;
-            updates['lastLog'] = logMsg;
-
-            if (opHp <= 0) {
-                updates['winner'] = myRole;
-                updates['status'] = 'finished';
+            if (winnerSymbol && !roomData.winner) {
+                db.ref(`ultimate_xo/${currentRoom}/winner`).set(winnerSymbol);
             }
 
-            db.ref('samurai/' + currentRoom).update(updates);
+            if (!winnerSymbol && !roomData.board.includes("") && !roomData.winner) {
+                db.ref(`ultimate_xo/${currentRoom}/winner`).set("draw");
+            }
         }
 
+        // مراقبة اللوحة للتحقق من الفوز (للمضيف لتخفيف الضغط)
+        setInterval(() => {
+            if (roomData && roomData.status === 'playing' && !roomData.winner) {
+                checkGameState();
+            }
+        }, 1000);
+
         // ==========================================
-        // 7. العودة (إعادة اللعب)
+        // 8. النهاية والنتائج
         // ==========================================
-        document.getElementById('closeOverlayBtn').addEventListener('click', () => {
+        function showResults() {
+            winnerOverlay.classList.add('show');
+            const title = document.getElementById('winnerTitle');
+            
+            const mySymbol = myRole === 'p1' ? 'X' : 'O';
+            const isWinner = (roomData.winner === mySymbol);
+            const isDraw = (roomData.winner === "draw");
+
+            if (isDraw) {
+                title.textContent = "تعادل! 🤝";
+                title.className = "winner-title draw-color";
+            } else if (isWinner) {
+                title.textContent = "لقد فزت! 🏆";
+                title.className = "winner-title win-color";
+                if(navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+            } else {
+                title.textContent = "لقد خسرت! 💀";
+                title.className = "winner-title lose-color";
+            }
+
+            document.getElementById('nextRoundBtn').style.display = 'flex';
+        }
+
+        function highlightWinningLine() {
+            const winPatterns = [
+                [0,1,2], [3,4,5], [6,7,8],
+                [0,3,6], [1,4,7], [2,5,8],
+                [0,4,8], [2,4,6]
+            ];
+            const b = roomData.board;
+            let winPattern = null;
+
+            for (let pattern of winPatterns) {
+                const [a, b1, c] = pattern;
+                if (b[a] && b[a] === b[b1] && b[a] === b[c]) {
+                    winPattern = pattern;
+                    break;
+                }
+            }
+
+            if (winPattern) {
+                winPattern.forEach(idx => {
+                    document.querySelectorAll('.cell')[idx].classList.add('win');
+                });
+            }
+        }
+
+        document.getElementById('nextRoundBtn').addEventListener('click', () => {
             winnerOverlay.classList.remove('show');
+            document.getElementById('nextRoundBtn').style.display = 'none';
+            
             if (roomData.host === myId) {
-                db.ref('samurai/' + currentRoom).update({
-                    status: 'playing',
-                    p1_hp: 100, p2_hp: 100,
+                db.ref('ultimate_xo/' + currentRoom).update({
+                    board: ["", "", "", "", "", "", "", "", ""],
                     turn: 'p1',
-                    winner: null,
-                    lastLog: "معركة جديدة بدأت! ⚔️"
+                    winner: null
                 });
             }
         });
 
+        document.getElementById('closeOverlayBtn').addEventListener('click', () => {
+            winnerOverlay.classList.remove('show');
+        });
+
+        document.getElementById('restartBtn').addEventListener('click', () => {
+            if(confirm("هل تريد الخروج من الغرفة؟")) {
+                window.location.reload();
+            }
+        });
+
         // ==========================================
-        // 8. الدردشة
+        // 9. الدردشة
         // ==========================================
         document.getElementById('sendChatBtn').addEventListener('click', sendMessage);
         document.getElementById('chatInput').addEventListener('keypress', (e) => {
@@ -575,7 +543,7 @@
             const text = input.value.trim();
             if (!text || !currentRoom) return;
             
-            db.ref('samurai/' + currentRoom + '/messages').push({
+            db.ref('ultimate_xo/' + currentRoom + '/messages').push({
                 sender: myName,
                 text: text,
                 timestamp: Date.now()
